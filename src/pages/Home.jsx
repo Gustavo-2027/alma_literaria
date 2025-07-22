@@ -1,8 +1,10 @@
 import BooksGrid from "../components/BooksGrid";
 import Nav from "../components/Nav";
 import Banner from "../components/Banner";
+import useDarkModeContext from "../hooks/useDarkModeContext";
 
 export default function Home() {
+  const {darkMode} = useDarkModeContext()
   return (
     <div>
       <Nav />
@@ -23,8 +25,12 @@ export default function Home() {
         <BooksGrid />
       </main>
 
-      <footer className="text-center py-6 border-t border-gray-200 bg-black mt-12">
-        <p className="text-sm font-light text-gray-100">
+      <footer className={`text-center py-6 border-t border-gray-200 mt-12 ${
+          darkMode
+            ? "bg-gradient-to-b from-gray-100 to-white text-gray-800"
+            : "bg-black text-white"
+        }`}>
+        <p className="text-sm font-light ">
           © 2025 Alma Literária. Todos os direitos reservados.
         </p>
       </footer>

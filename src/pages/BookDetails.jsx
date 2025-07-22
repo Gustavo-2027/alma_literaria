@@ -6,16 +6,18 @@ import { ShoppingCart } from "lucide-react";
 import Nav from "../components/Nav";
 import RelatedBooks from "../components/RelatedBooks";
 import Reviews from "../components/Reviews";
+import useDarkModeContext from "../hooks/useDarkModeContext";
 
 export default function BookDetails() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const book = Livros.find((product) => product.id === parseInt(id));
+  const { darkMode } = useDarkModeContext();
 
   if (!book) {
     return (
-      <div className="min-h-screen bg-white py-16 px-4 sm:px-8 lg:px-12 flex justify-center items-center">
-        <p className="text-xl font-light text-black uppercase tracking-wide">
+      <div className="min-h-screen  py-16 px-4 sm:px-8 lg:px-12 flex justify-center items-center">
+        <p className="text-xl font-light  uppercase tracking-wide">
           Livro não encontrado
         </p>
       </div>
@@ -23,13 +25,13 @@ export default function BookDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-white py-16 px-4 sm:px-8 lg:px-12">
+    <div className="min-h-screen py-16 px-4 sm:px-8 lg:px-12">
       <section className="pb-10">
         <Nav />
       </section>
       <Link
         to="/home"
-        className="text-sm font-light text-gray-600 hover:text-black uppercase tracking-wide mb-8 inline-block transition-colors duration-300 hover:border-b"
+        className="text-sm font-light  uppercase tracking-wide mb-8 inline-block transition-colors duration-300 hover:border-b"
       >
         ← Voltar à Biblioteca
       </Link>
@@ -43,39 +45,43 @@ export default function BookDetails() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
         </div>
         <div className="flex flex-col justify-center">
-          <h1 className="text-4xl font-light text-black mb-4 uppercase tracking-wider">
+          <h1 className="text-4xl font-light mb-4 uppercase tracking-wider">
             {book.name}
           </h1>
-          <p className="text-lg font-light text-gray-700 mb-3">
+          <p className="text-lg font-light  mb-3">
             Autor: {book.author || "Autor Desconhecido"}
           </p>
-          <p className="text-base font-light text-gray-600 mb-4">
+          <p className="text-base font-light  mb-4">
             Gênero: {book.genre || "Não especificado"}
           </p>
-          <p className="text-base font-light text-gray-600 mb-4">
+          <p className="text-base font-light  mb-4">
             Editora: {book.publisher || "Não especificado"}
           </p>
-          <p className="text-base font-light text-gray-600 mb-4">
+          <p className="text-base font-light mb-4">
             Ano de Publicação: {book.publication_year || "Não especificado"}
           </p>
 
-          <p className="text-base font-light text-gray-600 mb-6 leading-relaxed">
+          <p className="text-base font-light mb-6 leading-relaxed">
             {book.description ||
               "Nenhuma descrição disponível para este livro."}
           </p>
-          <p className="text-2xl font-normal text-black mb-6">
+          <p className="text-2xl font-normal  mb-6">
             R$ {book.price.toFixed(2)}
           </p>
           <div className="flex gap-4">
             <button
               onClick={() => dispatch(addToCart(book))}
-              className="w-2/3 bg-black cursor-pointer text-white text-sm font-light py-3 px-6 uppercase tracking-wide rounded-lg hover:bg-gray-800 transition-colors duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50"
+              className={`w-2/3 cursor-pointer hover:opacity-70 text-sm font-light py-3 px-6 uppercase tracking-wide rounded-lg transition-colors duration-400 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50 ${
+                darkMode ? "bg-gray-100 text-black " : "bg-black text-white"
+              }`}
             >
               <ShoppingCart size={18} /> Adicionar ao Carrinho
             </button>
             <button
               onClick={() => alert("Adicionado à lista de desejos!")}
-              className="w-1/3 cursor-pointer bg-gray-200 text-black text-sm font-light py-3 px-6 uppercase tracking-wide rounded-lg hover:bg-gray-300 transition-colors duration-300"
+              className={`w-1/3 cursor-pointer hover:opacity-70  text-sm font-light py-3 px-6 uppercase tracking-wide rounded-lg transition-colors duration-300 ${
+                darkMode ? "bg-black text-white " : "bg-gray-200 text-black"
+              }`}
             >
               Lista de Desejos
             </button>
@@ -83,7 +89,7 @@ export default function BookDetails() {
         </div>
       </div>
 
-     <Reviews/>
+      <Reviews />
       <RelatedBooks />
     </div>
   );

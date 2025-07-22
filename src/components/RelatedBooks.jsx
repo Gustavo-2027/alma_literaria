@@ -1,7 +1,9 @@
 import { useParams, Link } from "react-router-dom";
 import { Livros } from "./Livros";
+import useDarkModeContext from "../hooks/useDarkModeContext";
 
 export default function RelatedBooks() {
+  const { darkMode } = useDarkModeContext();
   const { id } = useParams();
   const num = Math.floor(Math.random() * 29);
   const relatedBooks = Livros.filter((b) => b.id !== parseInt(id)).slice(
@@ -9,11 +11,12 @@ export default function RelatedBooks() {
     num,
     num + 3
   );
+
   return (
     <div>
       {relatedBooks.length > 0 && (
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl font-light text-black mb-6 uppercase tracking-wider">
+          <h2 className="text-2xl font-light  mb-6 uppercase tracking-wider">
             Livros Relacionados
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -21,7 +24,9 @@ export default function RelatedBooks() {
               <Link
                 to={`/book/${Book.id}`}
                 key={Book.id}
-                className="group relative bg-white overflow-hidden transition-all duration-300 hover:shadow-md"
+                className={`group relative bg-white overflow-hidden transition-all duration-300 hover:scale-90 hover:shadow-md ${
+                  darkMode ? "shadow-gray-400" : "shadow-gray-700"
+                }`}
               >
                 <div className="relative w-full h-64">
                   <img

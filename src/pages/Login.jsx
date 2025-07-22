@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../redux/slices/authSlice";
 import { LogIn } from "lucide-react";
 import Nav from "../components/Nav";
+import useDarkModeContext from "../hooks/useDarkModeContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ export default function Login() {
   const [erro, setErro] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { darkMode } = useDarkModeContext();
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -35,10 +37,22 @@ export default function Login() {
 
   return (
     <div>
-      <Nav />
+      <nav
+        className={`fixed top-0 left-0 w-full  py-4 px-4 sm:px-8 lg:px-12 shadow-md z-10 ${
+          darkMode
+            ? "bg-gradient-to-b from-gray-100 to-white text-gray-800"
+            : "bg-black text-white"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto flex items-center justify-center">
+          <h1 className="text-2xl font-light uppercase tracking-wider">
+            Alma Literária
+          </h1>
+        </div>
+      </nav>
 
-      <div className="flex justify-center items-center min-h-screen pt-20">
-        <section className="w-full max-w-md bg-white rounded-lg shadow-2xl p-8">
+      <div className="flex justify-center items-center min-h-screen pt-20 ">
+        <section className="w-full max-w-md  rounded-lg shadow-2xl shadow-gray-800 p-8 bg-gray-100">
           <div className="text-center mb-8">
             <h2
               id="login-heading"

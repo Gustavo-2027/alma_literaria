@@ -3,29 +3,16 @@ import { Livros } from "./Livros";
 import { addToCart } from "../redux/slices/cartSlice";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { ShoppingCart, Star } from "lucide-react";
+import Pagination from "./Pagination";
 
 export default function BooksGrid() {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 8;
-  const totalPages = Math.ceil(Livros.length / booksPerPage);
-
   const indexOfLastBook = currentPage * booksPerPage;
   const indexOfFirstBook = indexOfLastBook - booksPerPage;
   const currentBooks = Livros.slice(indexOfFirstBook, indexOfLastBook);
-
-  const goToPreviousPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const goToNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
-
-  const goToPage = (page) => {
-    setCurrentPage(page);
-  };
 
   return (
     <section className="max-w-7xl w-full p-6 mx-auto">
@@ -33,7 +20,7 @@ export default function BooksGrid() {
         {currentBooks.map((livro) => (
           <div
             key={livro.id}
-            className="group relative bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+            className="group relative bg-white rounded-xl shadow-zinc-700 shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
           >
             <Link
               to={`/book/${livro.id}`}
@@ -45,10 +32,6 @@ export default function BooksGrid() {
                   src={livro.image}
                   alt={livro.name}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                  onError={(e) => {
-                    e.currentTarget.src = "/placeholder-book.jpg";
-                  }}
                 />
                 <div className="absolute top-4 left-4 bg-black text-white text-xs font-light uppercase tracking-wide px-2 py-1 rounded">
                   {livro.publication_year}
@@ -107,51 +90,7 @@ export default function BooksGrid() {
           </div>
         ))}
       </div>
-      {/*Paginação -- Transformar em um componente */}
-      <div className="flex justify-center items-center gap-2 mt-8">
-        <button
-          onClick={goToPreviousPage}
-          disabled={currentPage === 1}
-          className={`p-2 rounded-lg flex items-center gap-1 text-sm font-light uppercase tracking-wide cursor-pointer ${
-            currentPage === 1
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-gray-200 text-black hover:bg-gray-300"
-          }`}
-          aria-label="Página anterior"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          Anterior
-        </button>
-        {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-          (page) => (
-            <button
-              key={page}
-              onClick={() => goToPage(page)}
-              className={`px-4 py-2 rounded-lg cursor-pointer text-sm font-light uppercase tracking-wide ${
-                currentPage === page
-                  ? "bg-black text-white"
-                  : "bg-gray-200 text-black hover:bg-gray-300"
-              }`}
-              aria-label={`Ir para a página ${page}`}
-            >
-              {page}
-            </button>
-          )
-        )}
-        <button
-          onClick={goToNextPage}
-          disabled={currentPage === totalPages}
-          className={`p-2 rounded-lg flex items-center gap-1 text-sm font-light uppercase cursor-pointer tracking-wide ${
-            currentPage === totalPages
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-gray-200 text-black hover:bg-gray-300"
-          }`}
-          aria-label="Próxima página"
-        >
-          Próximo
-          <ChevronRight className="w-4 h-4 cursor-pointer" />
-        </button>
-      </div>
+      <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} />
     </section>
   );
 }
