@@ -1,8 +1,9 @@
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
-import {Livros} from "../components/Livros"
+import { Livros } from "../components/Livros";
 import { useParams, Link } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
+import Nav from "../components/Nav";
 
 export default function BookDetails() {
   const { id } = useParams();
@@ -26,6 +27,9 @@ export default function BookDetails() {
 
   return (
     <div className="min-h-screen bg-white py-16 px-4 sm:px-8 lg:px-12">
+      <section className="pb-10">
+        <Nav />
+      </section>
       <Link
         to="/home"
         className="text-sm font-light text-gray-600 hover:text-black uppercase tracking-wide mb-8 inline-block transition-colors duration-300 hover:border-b"
@@ -38,10 +42,6 @@ export default function BookDetails() {
             src={book.image}
             alt={book.name}
             className="w-full h-full object-cover rounded-lg shadow-lg transition-transform duration-500 hover:scale-105"
-            loading="lazy"
-            onError={(e) => {
-              e.currentTarget.src = "/placeholder-book.jpg";
-            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
         </div>

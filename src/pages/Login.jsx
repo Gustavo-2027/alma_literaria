@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/slices/authSlice";
+import { LogIn } from "lucide-react";
+import Nav from "../components/Nav";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -17,7 +19,7 @@ export default function Login() {
       return;
     }
     if (email === "gustavo@teste.com" && password === "123456") {
-      dispatch(login({ email, password }));
+      dispatch(login({ email }));
       navigate("/home");
       setEmail("");
       setPassword("");
@@ -27,86 +29,98 @@ export default function Login() {
     }
   }
 
+  function handleForgotPassword() {
+    alert("Funcionalidade de recuperação de senha em desenvolvimento!");
+  }
+
   return (
-    <div className="min-w-full min-h-dvh h-full bg-zinc-300">
-      <div className="flex justify-center items-center h-dvh">
-        <section className="w-275 h-125 bg-zinc-100 rounded-md flex shadow-2xl shadow-zinc-500">
-          <section className="bg-gradient-to-l from-zinc-800 to-zinc-900 text-white w-[50%] rounded-l shadow-2xl shadow-zinc-900 flex flex-col justify-center items-center gap-8 ">
-            <h1 className="text-3xl font-black">CodifyStore</h1>
-            <div>
-              <h1 className="text-2xl font-extrabold ">
-                Sua jornada começa aqui
-              </h1>
-              <p className="text-center text-zinc-200 pt-3">
-                Tudo começa com um clique.
-              </p>
-            </div>
-            <div className="flex flex-col juscjustify-center items-center gap-6">
-              <button
-                className="font-extrabold text- rounded-3xl px-4 py-3 border-2 cursor-pointer hover:scale-105 transition-transform "
-                onClick={(e) => handleSubmit(e)}
-              >
-                Iniciar sessão
-              </button>
-              <p className="text-zinc-200">
-                Esqueci minha{" "}
-                <span className="font-semibold text-white hover:border-b transition-transform cursor-pointer">
-                  senha
-                </span>
-                .
-              </p>
-            </div>
-          </section>
-          <section className="flex flex-col items-center  w-full py-12 gap-8">
-            <div className="w-full">
-              <h2 className="text-3xl text-gray-800 font-extrabold text-center pb-2">
-                Login
-              </h2>
-              <h3 className="text-lg text-zinc-500 font-light text-center">
-                Preencha seus dados
-              </h3>
-            </div>
-            <form
-              className="flex flex-col w-full justify-center items-center gap-5"
-              onSubmit={(e) => handleSubmit(e)}
+    <div>
+      <Nav />
+
+      <div className="flex justify-center items-center min-h-screen pt-20">
+        <section className="w-full max-w-md bg-white rounded-lg shadow-2xl p-8">
+          <div className="text-center mb-8">
+            <h2
+              id="login-heading"
+              className="text-3xl font-light uppercase tracking-wider text-black"
             >
-              <label>
-                <p className="font-extralight text-zinc-600 pb-1">Email</p>
-                <input
-                  type="email"
-                  placeholder="Digite seu email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 w-120 px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                ></input>
-              </label>
-              <label>
-                <p className="font-extralight text-zinc-600 pb-1">Senha</p>
-                <input
-                  type="password"
-                  placeholder="Digite sua senha"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="mt-1 w-120 px-4 py-3 rounded-lg bg-gray-100 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all mb-5"
-                ></input>
-              </label>
-              {erro && (
-                <p
-                  id="form-error"
-                  className="text-red-500 text-sm text-center"
-                  role="alert"
-                >
-                  {erro}
-                </p>
-              )}
-              <button
-                className="px-15 py-4 bg-zinc-900 text-zinc-200 text-xl font-bold rounded-2xl cursor-pointer hover:bg-zinc-700 duration-600"
-                type="submit"
+              Login
+            </h2>
+            <p className="text-lg font-light text-gray-600 mt-2">
+              Acesse sua conta na Alma Literária
+            </p>
+          </div>
+          <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+            <div>
+              <label
+                htmlFor="email"
+                className="text-sm font-light uppercase tracking-wide text-gray-600"
               >
-                Entrar
-              </button>
-            </form>
-          </section>
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                placeholder="Digite seu email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full mt-1 px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 text-base font-light text-gray-600 focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-all"
+                aria-label="Digite seu email"
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="password"
+                className="text-sm font-light uppercase tracking-wide text-gray-600"
+              >
+                Senha
+              </label>
+              <input
+                id="password"
+                type="password"
+                placeholder="Digite sua senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full mt-1 px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 text-base font-light text-gray-600 focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-all"
+                aria-label="Digite sua senha"
+                required
+              />
+            </div>
+            {erro && (
+              <p
+                id="form-error"
+                className="text-red-600 text-sm font-light text-center bg-red-100 py-2 rounded-lg"
+                role="alert"
+              >
+                {erro}
+              </p>
+            )}
+            <button
+              type="submit"
+              className="w-full bg-black text-white text-sm font-light py-3 px-6 uppercase tracking-wide rounded-lg hover:bg-gray-800 transition-colors duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50 cursor-pointer"
+              aria-label="Entrar na conta"
+            >
+              <LogIn className="w-4 h-4" />
+              Entrar
+            </button>
+          </form>
+          <div className="flex justify-between items-center mt-6 text-sm font-light uppercase tracking-wide text-gray-600 cursor-pointer">
+            <button
+              onClick={handleForgotPassword}
+              className="hover:text-black hover:border-b border-black transition-colors cursor-pointer"
+              aria-label="Recuperar senha"
+            >
+              Esqueci minha senha
+            </button>
+            <Link
+              to="/register"
+              className="hover:text-black hover:border-b border-black transition-colors"
+              aria-label="Criar uma nova conta"
+            >
+              Criar conta
+            </Link>
+          </div>
         </section>
       </div>
     </div>

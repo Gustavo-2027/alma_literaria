@@ -86,7 +86,7 @@ export default function BooksGrid() {
                   e.preventDefault();
                   dispatch(addToCart(livro));
                 }}
-                className="w-2/3 bg-black text-white text-sm font-light py-3 px-6 uppercase tracking-wide rounded-lg hover:bg-gray-800 transition-colors duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50"
+                className="w-2/3 bg-black cursor-pointer text-white text-sm font-light py-3 px-6 uppercase tracking-wide rounded-lg hover:bg-gray-800 transition-colors duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50"
                 aria-label={`Adicionar ${livro.name} ao carrinho`}
               >
                 <ShoppingCart className="w-4 h-4" />
@@ -97,7 +97,7 @@ export default function BooksGrid() {
                   e.preventDefault();
                   alert("Adicionado à lista de desejos!");
                 }}
-                className="w-1/3 bg-gray-200 text-black text-sm font-light py-3 px-6 uppercase tracking-wide rounded-lg hover:bg-gray-300 transition-colors duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50"
+                className="w-1/3 bg-gray-200 text-black cursor-pointer text-sm font-light py-3 px-6 uppercase tracking-wide rounded-lg hover:bg-gray-300 transition-colors duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50"
                 aria-label={`Adicionar ${livro.name} à lista de desejos`}
               >
                 <Star className="w-4 h-4" />
@@ -107,6 +107,7 @@ export default function BooksGrid() {
           </div>
         ))}
       </div>
+      {/*Paginação -- Transformar em um componente */}
       <div className="flex justify-center items-center gap-2 mt-8">
         <button
           onClick={goToPreviousPage}

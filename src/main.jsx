@@ -8,27 +8,34 @@ import Home from "./pages/Home";
 import BookDetails from "./pages/BookDetails";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
+import Layout from "./pages/Layout";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Login />,
-  },
-  {
-    path: "/home",
-    element: (
-      <Private>
-        <Home />
-      </Private>
-    ),
-  },
-  {
-    path: "/book/:id",
-    element: (
-      <Private>
-        <BookDetails />
-      </Private>
-    ),
+    element: <Layout />,
+    children: [
+      {
+        path: "/",
+        element: <Login />,
+      },
+      {
+        path: "/home",
+        element: (
+          <Private>
+            <Home />
+          </Private>
+        ),
+      },
+      {
+        path: "/book/:id",
+        element: (
+          <Private>
+            <BookDetails />
+          </Private>
+        ),
+      },
+    ],
   },
 ]);
 

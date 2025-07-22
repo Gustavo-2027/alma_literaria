@@ -4,7 +4,7 @@ import Banner from "../components/Banner";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-white">
+    <div>
       <Nav />
 
       <Banner />

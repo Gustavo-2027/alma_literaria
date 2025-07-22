@@ -31,7 +31,7 @@ export const Livros = [
     id: 3,
     name: "Memórias do subsolo",
     price: 43.37,
-    image: "https://m.media-amazon.com/images/I/81b1DD3RZ-L._SY466_.jpg",
+    image: "https://m.media-amazon.com/images/I/51q5HvjLe7L._SY445_SX342_ControlCacheEqualizer_.jpg",
     author: "Fiódor Dostoiévski",
     description:
       "Obra-prima da literatura mundial, esta pequena novela traz, em embrião, vários temas da fase madura de Dostoiévski. Seu protagonista, um funcionário que vive no subsolo de um edifício em São Petersburgo, expõe a sua visão de mundo num discurso explosivo, labiríntico, vertido impecavelmente para o português por Boris Schnaiderman. Tradução primorosa. (Luciano Trigo, O Globo)",
