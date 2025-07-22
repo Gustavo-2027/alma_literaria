@@ -4,16 +4,13 @@ import { Livros } from "../components/Livros";
 import { useParams, Link } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import Nav from "../components/Nav";
+import RelatedBooks from "../components/RelatedBooks";
+import Reviews from "../components/Reviews";
 
 export default function BookDetails() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const book = Livros.find((product) => product.id === parseInt(id));
-  const num = Math.floor(Math.random() * 29);
-  const relatedBooks = Livros.filter((b) => b.id !== parseInt(id)).slice(
-    num,
-    num + 3
-  );
 
   if (!book) {
     return (
@@ -86,50 +83,8 @@ export default function BookDetails() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto mb-16">
-        <h2 className="text-2xl font-light text-black mb-6 uppercase tracking-wider">
-          Avaliações de Clientes
-        </h2>
-        <div className="bg-gray-50 p-6 rounded-lg">
-          <p className="text-base font-light text-gray-600 italic">
-            Nenhuma avaliação disponível no momento. Seja o primeiro a avaliar
-            este livro!
-          </p>
-        </div>
-      </div>
-
-      {relatedBooks.length > 0 && (
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl font-light text-black mb-6 uppercase tracking-wider">
-            Livros Relacionados
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {relatedBooks.map((relatedBook) => (
-              <Link
-                to={`/book/${relatedBook.id}`}
-                key={relatedBook.id}
-                className="group relative bg-white overflow-hidden transition-all duration-300 hover:shadow-md"
-              >
-                <div className="relative w-full h-64">
-                  <img
-                    src={relatedBook.image}
-                    alt={relatedBook.name}
-                    className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-90"
-                  />
-                </div>
-                <div className="p-4 flex flex-col items-center text-center">
-                  <h3 className="text-base font-normal text-black mb-1 line-clamp-2 uppercase">
-                    {relatedBook.name}
-                  </h3>
-                  <p className="text-sm font-light text-gray-700 mb-3">
-                    R$ {relatedBook.price.toFixed(2)}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+     <Reviews/>
+      <RelatedBooks />
     </div>
   );
 }
