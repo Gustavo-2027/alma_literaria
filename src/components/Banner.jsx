@@ -1,6 +1,7 @@
 import { Livros } from "./Livros";
 import { Link } from "react-router-dom";
 import Liv from "../assets/img/mg.jpeg";
+import { Book } from "lucide-react";
 export default function Banner() {
   const num = Math.floor(Math.random() * 29);
   return (
@@ -18,10 +19,12 @@ export default function Banner() {
           </p>
           <Link
             to={`/book/${Livros[num].id}`}
-            className="bg-black text-white text-sm font-light py-3 px-6 uppercase tracking-wide rounded-lg hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
-            aria-label="Explorar Cem Anos de Solidão"
+            className="inline-flex items-center gap-2 bg-black text-white text-sm font-light py-3 px-6 uppercase tracking-wide rounded-lg hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+            aria-label={`Explorar ${num}`}
           >
+            <Book className="w-4 h-4" />
             Explore Agora
+         
           </Link>
         </div>
       </div>

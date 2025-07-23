@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
 import { House, MoonStar, ShoppingBag, SunMedium, LogOut } from "lucide-react";
 import { DarkModeContext } from "../context/DarkModeContext";
@@ -8,6 +8,10 @@ import { DarkModeContext } from "../context/DarkModeContext";
 export default function Nav() {
   const { darkMode, setDarkMode } = useContext(DarkModeContext);
   const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cart.items);
+  const totalItems = cartItems
+    ? cartItems.reduce((acc, item) => acc + item.quantity, 0)
+    : 0;
 
   const handleLogout = () => {
     dispatch(logout());
@@ -24,7 +28,7 @@ export default function Nav() {
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link
-            to="/"
+            to="/home"
             className="text-2xl font-light uppercase tracking-wider hover:text-gray-300 transition-colors"
           >
             Alma Literária
@@ -39,9 +43,20 @@ export default function Nav() {
             </button>
             <Link
               to="/cart"
-              className="flex items-center gap-2 text-sm font-light uppercase hover:text-gray-300 transition-colors cursor-pointer"
-              aria-label="Ver Carrinho"
+              className="flex items-center gap-2 text-sm font-light uppercase hover:text-gray-300 transition-colors cursor-pointer relative"
+              aria-label={`Ver Carrinho (${totalItems} itens)`}
             >
+              {totalItems > 0 && (
+                <span
+                  className={`absolute -top-2 -right-4 flex items-center justify-center w-5 h-5 rounded-full text-xs font-medium ${
+                    darkMode
+                      ? "bg-gray-800 text-white"
+                      : "bg-white text-gray-800"
+                  }`}
+                >
+                  {totalItems}
+                </span>
+              )}
               <ShoppingBag className="w-5 h-5" />
               Carrinho
             </Link>
