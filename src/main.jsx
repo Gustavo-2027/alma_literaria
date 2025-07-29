@@ -11,6 +11,7 @@ import { store } from "./redux/store";
 import Layout from "./pages/Layout";
 import { DarkModeProvider } from "./context/DarkModeContext";
 import Cart from "./pages/Cart";
+import Register from "./pages/Register";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Login />,
+      },
+      {
+        path: "/register",
+        element: <Register/>
       },
       {
         path: "/home",

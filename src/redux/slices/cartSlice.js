@@ -12,7 +12,7 @@ const cartSlice = createSlice({
     setUser(state, action) {
       state.userEmail = action.payload.email;
       state.items = action.payload.email
-        ? JSON.parse(localStorage.getItem(`cart_${action.payload.email}`))
+        ? JSON.parse(localStorage.getItem(`cart_${action.payload.email}`)) || []
         : [];
     },
     addToCart(state, action) {
