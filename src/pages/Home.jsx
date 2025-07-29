@@ -5,17 +5,23 @@ import BooksGrid from "../components/BooksGrid";
 import Nav from "../components/Nav";
 import Banner from "../components/Banner";
 import useDarkModeContext from "../hooks/useDarkModeContext";
+import { userInformations } from "../components/Users";
 
 export default function Home() {
   const { darkMode } = useDarkModeContext();
-  const user = useSelector((state) => state.auth.user);
+  const authUser = useSelector((state) => state.auth.user); 
   const dispatch = useDispatch();
 
+  const currentUser = userInformations.find(
+    (user) => user.email === authUser?.email
+  );
+
   useEffect(() => {
-    if (user) {
-      dispatch(setUser({ email: user.email }));
+    if (authUser) {
+      dispatch(setUser({ email: authUser.email }));
     }
-  }, [user, dispatch]);
+  }, [authUser, dispatch]);
+  ;
 
   return (
     <div>
@@ -29,7 +35,7 @@ export default function Home() {
             darkMode ? "text-white" : "text-black"
           }`}
         >
-          Bem-vindo à Alma Literária
+          Bem-vindo à Alma Literária, {currentUser?.name || "Visitante"}
         </h2>
         <p
           className={`text-lg font-light max-w-3xl mx-auto ${
@@ -48,8 +54,8 @@ export default function Home() {
       <footer
         className={`text-center py-6 border-t mt-12 ${
           darkMode
-            ? "bg-gradient-to-b from-gray-800 to-black text-white border-gray-700"
-            : "bg-gradient-to-b from-gray-100 to-white text-gray-800 border-gray-200"
+            ? "bg-gradient-to-b from-gray-100 to-white text-gray-800"
+            : "bg-gradient-to-b from-black/95 to-black text-white"
         }`}
       >
         <p className="text-sm font-light">
