@@ -1,18 +1,28 @@
 import { useState } from "react";
 import { Livros } from "./Livros";
 import { addToCart } from "../redux/slices/cartSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Star } from "lucide-react";
 import Pagination from "./Pagination";
 
 export default function BooksGrid() {
   const dispatch = useDispatch();
+  const user = useSelector(state => state.auth.user)
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 8;
   const indexOfLastBook = currentPage * booksPerPage;
   const indexOfFirstBook = indexOfLastBook - booksPerPage;
   const currentBooks = Livros.slice(indexOfFirstBook, indexOfLastBook);
+
+  function handleAddBooksCart(product) {
+    if(user) {
+      dispatch(addToCart(product));
+      return
+    }
+    alert("Faça login para poder adicionar produtos ao seu carrinho!")
+    
+  }
 
   return (
     <section className="max-w-7xl w-full p-6 mx-auto">
@@ -67,7 +77,7 @@ export default function BooksGrid() {
               <button
                 onClick={(e) => {
                   e.preventDefault();
-                  dispatch(addToCart(livro));
+                  handleAddBooksCart(livro)
                 }}
                 className="w-2/3 bg-black cursor-pointer text-white text-sm font-light py-3 px-6 uppercase tracking-wide rounded-lg hover:bg-gray-800 transition-colors duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50"
                 aria-label={`Adicionar ${livro.name} ao carrinho`}

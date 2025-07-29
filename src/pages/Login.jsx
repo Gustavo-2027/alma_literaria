@@ -3,8 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/slices/authSlice";
 import { LogIn } from "lucide-react";
-import Nav from "../components/Nav";
 import useDarkModeContext from "../hooks/useDarkModeContext";
+import { setUser } from "../redux/slices/cartSlice";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -14,14 +14,27 @@ export default function Login() {
   const dispatch = useDispatch();
   const { darkMode } = useDarkModeContext();
 
+  const userInformations = [
+    { id: 2025 , nome: "Gustavo", email: "teste@teste.com", password: "123456" },
+    { id: 2027 , nome: "Teste", email: "gustavo@teste.com", password: "123456" },
+  ];
+
   function handleSubmit(e) {
     e.preventDefault();
     if (!email || !password) {
       setErro("Por favor, preencha todos os campos");
       return;
     }
-    if (email === "gustavo@teste.com" && password === "123456") {
+
+    const users = userInformations.find(
+      (user) =>
+        user.email.toLowerCase() === email.toLowerCase() &&
+        user.password === password
+    );
+
+    if (users) {
       dispatch(login({ email }));
+      dispatch(setUser({ email })); 
       navigate("/home");
       setEmail("");
       setPassword("");
@@ -31,8 +44,8 @@ export default function Login() {
     }
   }
 
-  function handleForgotPassword() {
-    alert("Funcionalidade de recuperação de senha em desenvolvimento!");
+  function handleLoginwithoutAccount() {
+    navigate("/home");
   }
 
   return (
@@ -119,9 +132,22 @@ export default function Login() {
               Entrar
             </button>
           </form>
+          <button
+            type="submit"
+            onClick={() => handleLoginwithoutAccount()}
+            className="w-full bg-black/60 text-white text-sm font-light py-3 px-6 uppercase tracking-wide rounded-lg hover:bg-black/50 transition-colors duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50 cursor-pointer mt-4"
+            aria-label="Entrar na conta"
+          >
+            <LogIn className="w-4 h-4" />
+            Entrar sem conta
+          </button>
           <div className="flex justify-between items-center mt-6 text-sm font-light uppercase tracking-wide text-gray-600 cursor-pointer">
             <button
-              onClick={handleForgotPassword}
+              onClick={() =>
+                alert(
+                  "Funcionalidade de recuperação de senha em desenvolvimento!"
+                )
+              }
               className="hover:text-black hover:border-b border-black transition-colors cursor-pointer"
               aria-label="Recuperar senha"
             >

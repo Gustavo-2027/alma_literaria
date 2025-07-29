@@ -1,11 +1,21 @@
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Nav from "../components/Nav";
 import ItemsCart from "../components/ItemsCart";
 import ResumeCart from "../components/ResumeCart";
+import { useEffect } from "react";
+import { setUser } from "../redux/slices/cartSlice";
 
 export default function Cart() {
   const items = useSelector((state) => state.cart.items);
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user) {
+      dispatch(setUser({ email: user.email }));
+    }
+  }, [user, dispatch]);
 
   return (
     <>
