@@ -62,8 +62,8 @@ export default function Login() {
         </div>
       </nav>
 
-      <div className="flex justify-center items-center min-h-screen pt-20 ">
-        <section className="w-full max-w-md  rounded-lg shadow-2xl shadow-gray-800 p-8 bg-gray-100">
+      <div className="flex justify-center items-center min-h-screen pt-20">
+        <section className="w-full max-w-md rounded-lg shadow-2xl shadow-gray-800 p-8 bg-gray-100">
           <div className="text-center mb-8">
             <h2
               id="login-heading"

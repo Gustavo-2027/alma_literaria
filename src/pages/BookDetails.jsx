@@ -4,7 +4,7 @@ import { Livros } from "../components/Livros";
 import { useParams, Link } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import useDarkModeContext from "../hooks/useDarkModeContext";
-import { lazy } from "react";
+import { lazy, useEffect } from "react";
 
 const Nav = lazy(() => import("../components/Nav"));
 const RelatedBooks = lazy(() => import("../components/RelatedBooks"));
@@ -16,9 +16,14 @@ export default function BookDetails() {
   const book = Livros.find((product) => product.id === parseInt(id));
   const { darkMode } = useDarkModeContext();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
+
   if (!book) {
     return (
-      <div className="min-h-screen  py-16 px-4 sm:px-8 lg:px-12 flex justify-center items-center">
+      <div className="min-h-screen py-16 px-4 sm:px-8 lg:px-12 flex justify-center items-center">
         <p className="text-xl font-light  uppercase tracking-wide">
           Livro não encontrado
         </p>
