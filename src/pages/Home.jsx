@@ -1,15 +1,17 @@
-import { useEffect } from "react";
+import { lazy, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slices/cartSlice";
-import BooksGrid from "../components/BooksGrid";
-import Nav from "../components/Nav";
-import Banner from "../components/Banner";
 import useDarkModeContext from "../hooks/useDarkModeContext";
 import { userInformations } from "../components/Users";
 
+// * Carregamento via lazzy (foco em aumentar o tempo de respota dos componentes)
+const Nav = lazy(() => import("../components/Nav"));
+const Banner = lazy(() => import("../components/Banner"));
+const BooksGrid = lazy(() => import("../components/BooksGrid"));
+
 export default function Home() {
   const { darkMode } = useDarkModeContext();
-  const authUser = useSelector((state) => state.auth.user); 
+  const authUser = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
 
   const currentUser = userInformations.find(
@@ -21,8 +23,6 @@ export default function Home() {
       dispatch(setUser({ email: authUser.email }));
     }
   }, [authUser, dispatch]);
-  ;
-
   return (
     <div>
       <Nav />

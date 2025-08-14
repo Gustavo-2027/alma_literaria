@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../redux/slices/authSlice";
 import { LogIn } from "lucide-react";
 import useDarkModeContext from "../hooks/useDarkModeContext";
-import { setUser } from "../redux/slices/cartSlice";
+import { logout, setUser } from "../redux/slices/cartSlice";
 import { userInformations } from "../components/Users";
 
 export default function Login() {
@@ -30,6 +30,7 @@ export default function Login() {
     );
 
     if (users) {
+      dispatch(logout())
       dispatch(login({ email }));
       dispatch(setUser({ email }));
       navigate("/home");

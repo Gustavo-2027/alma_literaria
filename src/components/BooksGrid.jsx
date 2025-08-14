@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Livros } from "./Livros";
 import { addToCart } from "../redux/slices/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { ShoppingCart, Star } from "lucide-react";
 import Pagination from "./Pagination";
 
-export default function BooksGrid() {
+function BooksGrid() {
   const dispatch = useDispatch();
   const user = useSelector(state => state.auth.user)
   const [currentPage, setCurrentPage] = useState(1);
@@ -104,3 +104,5 @@ export default function BooksGrid() {
     </section>
   );
 }
+
+export default React.memo(BooksGrid)

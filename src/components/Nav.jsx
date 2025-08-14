@@ -1,11 +1,11 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
 import { House, MoonStar, ShoppingBag, SunMedium, LogOut } from "lucide-react";
 import { DarkModeContext } from "../context/DarkModeContext";
 
-export default function Nav() {
+function Nav() {
   const { darkMode, setDarkMode } = useContext(DarkModeContext);
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
@@ -97,3 +97,5 @@ export default function Nav() {
     </header>
   );
 }
+
+export default React.memo(Nav)
