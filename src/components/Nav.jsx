@@ -1,21 +1,36 @@
-import { useContext } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
 import { House, MoonStar, ShoppingBag, SunMedium, LogOut } from "lucide-react";
 import { DarkModeContext } from "../context/DarkModeContext";
 
-export default function Nav() {
+function Nav() {
   const { darkMode, setDarkMode } = useContext(DarkModeContext);
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
+  const user = useSelector((state) => state.auth.user);
+  const navigate = useNavigate();
   const totalItems = cartItems
     ? cartItems.reduce((acc, item) => acc + item.quantity, 0)
     : 0;
 
-  const handleLogout = () => {
-    dispatch(logout());
-  };
+  function handleLogout() {
+    if (user) {
+      dispatch(logout());
+      navigate("/");
+      return;
+    }
+    navigate("/");
+  }
+
+  function handleCart() {
+    if (!user) {
+      alert("Crie uma conta para poder acessar o carrinho");
+      return
+    }
+    navigate("/cart");
+  }
 
   return (
     <header>
@@ -42,11 +57,11 @@ export default function Nav() {
               {darkMode ? <SunMedium size={18} /> : <MoonStar size={18} />}
             </button>
             <Link
-              to="/cart"
               className="flex items-center gap-2 text-sm font-light uppercase hover:text-gray-300 transition-colors cursor-pointer relative"
               aria-label={`Ver Carrinho (${totalItems} itens)`}
+              onClick={(() => handleCart())}
             >
-              {totalItems > 0 && (
+              {totalItems > 0 && user && (
                 <span
                   className={`absolute -top-2 -right-4 flex items-center justify-center w-5 h-5 rounded-full text-xs font-medium ${
                     darkMode
@@ -54,7 +69,7 @@ export default function Nav() {
                       : "bg-white text-gray-800"
                   }`}
                 >
-                  {totalItems}
+                  {user && totalItems}
                 </span>
               )}
               <ShoppingBag className="w-5 h-5" />
@@ -74,7 +89,7 @@ export default function Nav() {
               aria-label="Sair da conta"
             >
               <LogOut className="w-5 h-5" />
-              Sair
+              {user ? "Sair" : "Entrar"}
             </button>
           </div>
         </div>
@@ -82,3 +97,5 @@ export default function Nav() {
     </header>
   );
 }
+
+export default React.memo(Nav)

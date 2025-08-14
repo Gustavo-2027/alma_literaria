@@ -17,7 +17,7 @@ export default function Pagination({ currentPage, setCurrentPage }) {
   };
 
   return (
-    <div className="flex justify-center items-center gap-2 mt-8">
+    <a href="#ibanner" className="flex justify-center items-center gap-2 mt-8">
       <button
         onClick={goToPreviousPage}
         disabled={currentPage === 1}
@@ -60,6 +60,6 @@ export default function Pagination({ currentPage, setCurrentPage }) {
         Próximo
         <ChevronRight className="w-4 h-4 cursor-pointer" />
       </button>
-    </div>
+    </a>
   );
 }

@@ -9,8 +9,9 @@ import BookDetails from "./pages/BookDetails";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import Layout from "./pages/Layout";
-import { DarkModeContext, DarkModeProvider } from "./context/DarkModeContext";
+import { DarkModeProvider } from "./context/DarkModeContext";
 import Cart from "./pages/Cart";
+import Register from "./pages/Register";
 
 const router = createBrowserRouter([
   {
@@ -22,20 +23,16 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
+        path: "/register",
+        element: <Register/>
+      },
+      {
         path: "/home",
-        element: (
-          <Private>
-            <Home />
-          </Private>
-        ),
+        element: <Home />,
       },
       {
         path: "/book/:id",
-        element: (
-          <Private>
-            <BookDetails />
-          </Private>
-        ),
+        element: <BookDetails />,
       },
       {
         path: "/cart",

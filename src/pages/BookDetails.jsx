@@ -3,10 +3,12 @@ import { addToCart } from "../redux/slices/cartSlice";
 import { Livros } from "../components/Livros";
 import { useParams, Link } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
-import Nav from "../components/Nav";
-import RelatedBooks from "../components/RelatedBooks";
-import Reviews from "../components/Reviews";
 import useDarkModeContext from "../hooks/useDarkModeContext";
+import { lazy } from "react";
+
+const Nav = lazy(() => import("../components/Nav"));
+const RelatedBooks = lazy(() => import("../components/RelatedBooks"));
+const Reviews = lazy(() => import("../components/Reviews"));
 
 export default function BookDetails() {
   const { id } = useParams();

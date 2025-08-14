@@ -5,7 +5,7 @@ export default function useDarkModeContext() {
   const context = useContext(DarkModeContext);
 
   if (!context) {
-    console.log("Erro de contexto: ThemeContext");
+    console.log("Erro de contexto: ThemeContext"); // * Melhorar esse comentário
   }
 
   return context;

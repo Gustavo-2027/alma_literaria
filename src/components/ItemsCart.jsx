@@ -1,8 +1,8 @@
-import { Trash2, Plus, Minus, Link } from "lucide-react";
+import { Trash2, Plus, Minus} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { adjustQuantity, removeFromCart } from "../redux/slices/cartSlice";
-import useDarkModeContext from "../hooks/useDarkModeContext";
 import { useNavigate } from "react-router-dom";
+import useDarkModeContext from "../hooks/useDarkModeContext";
 
 export default function ItemsCart() {
   const { darkMode } = useDarkModeContext();
