@@ -1,165 +1,271 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { login } from "../redux/slices/authSlice";
 import { LogIn } from "lucide-react";
+
+import { login } from "../redux/slices/authSlice";
+import { clearUser, setUser } from "../redux/slices/cartSlice";
 import useDarkModeContext from "../hooks/useDarkModeContext";
-import { logout, setUser } from "../redux/slices/cartSlice";
-import { userInformations } from "../components/Users";
+import { useToast } from "../context/ToastContext";
+import { userInformations } from "../data/Users";
+import bannerImage from "../assets/img/BannerLogin.jpg";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [erro, setErro] = useState("");
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { darkMode } = useDarkModeContext();
+  const { showToast } = useToast();
 
+  function handleSubmit(event) {
+    event.preventDefault();
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    if (!email || !password) {
-      setErro("Por favor, preencha todos os campos");
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedPassword = password.trim();
+
+    if (!normalizedEmail || !normalizedPassword) {
+      setError("Por favor, preencha todos os campos.");
       return;
     }
 
-    const users = userInformations.find(
+    const foundUser = userInformations.find(
       (user) =>
-        user.email.toLowerCase() === email.toLowerCase() &&
-        user.password === password
+        user.email.toLowerCase() === normalizedEmail &&
+        user.password === normalizedPassword
     );
 
-    if (users) {
-      dispatch(logout())
-      dispatch(login({ email }));
-      dispatch(setUser({ email }));
-      navigate("/home");
-      setEmail("");
-      setPassword("");
-      setErro("");
-    } else {
-      setErro("Email ou senha inválidos");
+    if (!foundUser) {
+      setError("Email ou senha inválidos.");
+      return;
     }
-  }
 
-  function handleLoginwithoutAccount() {
+    dispatch(clearUser());
+    dispatch(
+      login({
+        id: foundUser.id,
+        email: foundUser.email,
+        name: foundUser.name,
+      })
+    );
+    dispatch(setUser({ email: foundUser.email }));
+
+    setEmail("");
+    setPassword("");
+    setError("");
     navigate("/home");
   }
 
-  return (
-    <div>
-      <nav
-        className={`fixed top-0 left-0 w-full  py-4 px-4 sm:px-8 lg:px-12 shadow-md z-10 ${
-          darkMode
-            ? "bg-gradient-to-b from-gray-100 to-white text-gray-800"
-            : "bg-black text-white"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto flex items-center justify-center">
-          <h1 className="text-2xl font-light uppercase tracking-wider">
-            Alma Literária
-          </h1>
-        </div>
-      </nav>
+  function handleLoginWithoutAccount() {
+    navigate("/home");
+  }
 
-      <div className="flex justify-center items-center min-h-screen pt-20">
-        <section className="w-full max-w-md rounded-lg shadow-2xl shadow-gray-800 p-8 bg-gray-100">
-          <div className="text-center mb-8">
-            <h2
-              id="login-heading"
-              className="text-3xl font-light uppercase tracking-wider text-black"
-            >
-              Login
-            </h2>
-            <p className="text-lg font-light text-gray-600 mt-2">
-              Acesse sua conta na Alma Literária
-            </p>
-          </div>
-          <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-            <div>
-              <label
-                htmlFor="email"
-                className="text-sm font-light uppercase tracking-wide text-gray-600"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="Digite seu email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full mt-1 px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 text-base font-light text-gray-600 focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-all"
-                aria-label="Digite seu email"
-                required
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="password"
-                className="text-sm font-light uppercase tracking-wide text-gray-600"
-              >
-                Senha
-              </label>
-              <input
-                id="password"
-                type="password"
-                placeholder="Digite sua senha"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full mt-1 px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 text-base font-light text-gray-600 focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-all"
-                aria-label="Digite sua senha"
-                required
-              />
-            </div>
-            {erro && (
-              <p
-                id="form-error"
-                className="text-red-600 text-sm font-light text-center bg-red-100 py-2 rounded-lg"
-                role="alert"
-              >
-                {erro}
+  function handleForgotPassword() {
+    showToast({
+      title: "Em desenvolvimento",
+      description: "A recuperação de senha estará disponível em breve.",
+      duration: 2800,
+    });
+  }
+
+  function handleChangeEmail(event) {
+    setEmail(event.target.value);
+    if (error) setError("");
+  }
+
+  function handleChangePassword(event) {
+    setPassword(event.target.value);
+    if (error) setError("");
+  }
+
+  return (
+    <div
+      className={`min-h-screen ${
+        darkMode ? "bg-black text-white" : "bg-white text-black"
+      }`}
+    >
+      <div className="flex min-h-screen">
+        <div className="hidden h-screen md:relative md:block md:w-[60%]">
+          <img
+            src={bannerImage}
+            alt="Ambiente editorial da Alma Literária"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/20" />
+
+          <div className="absolute inset-x-0 bottom-0 p-10 lg:p-14">
+            <div className="max-w-xl text-white">
+              <p className="mb-3 text-[11px] uppercase tracking-[0.32em] text-white/80">
+                Alma Literária
               </p>
-            )}
+              <h2 className="text-3xl font-light uppercase leading-tight tracking-[0.18em] lg:text-5xl">
+                Clássicos para quem aprecia elegância e profundidade.
+              </h2>
+              <p className="mt-5 max-w-md text-sm leading-7 text-white/80 lg:text-base">
+                Descubra obras atemporais em uma experiência de leitura mais
+                sofisticada, limpa e inspiradora.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className={`flex w-full items-center justify-center px-6 py-12 sm:px-10 lg:px-16 md:w-[40%] ${
+            darkMode ? "bg-black text-white" : "bg-white text-black"
+          }`}
+        >
+          <div className="w-full max-w-md">
+            <div className="mb-14">
+              <p
+                className={`mb-3 text-[11px] uppercase tracking-[0.32em] ${
+                  darkMode ? "text-zinc-500" : "text-zinc-400"
+                }`}
+              >
+                Acesso
+              </p>
+
+              <h1 className="text-3xl font-light uppercase tracking-[0.18em] sm:text-4xl">
+                Login
+              </h1>
+
+              <p
+                className={`mt-4 text-sm leading-7 ${
+                  darkMode ? "text-zinc-400" : "text-zinc-500"
+                }`}
+              >
+                Entre para acessar sua experiência na Alma Literária.
+              </p>
+            </div>
+
+            <form className="flex flex-col gap-7" onSubmit={handleSubmit}>
+              <div>
+                <label
+                  htmlFor="email"
+                  className="text-[11px] uppercase tracking-[0.22em] text-zinc-500"
+                >
+                  Email
+                </label>
+
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="Digite seu email"
+                  value={email}
+                  onChange={handleChangeEmail}
+                  className={`mt-3 w-full border-b bg-transparent py-3 text-sm outline-none transition ${
+                    darkMode
+                      ? "border-zinc-700 text-white placeholder:text-zinc-500 focus:border-white"
+                      : "border-zinc-300 text-black placeholder:text-zinc-400 focus:border-black"
+                  }`}
+                  autoComplete="email"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="text-[11px] uppercase tracking-[0.22em] text-zinc-500"
+                >
+                  Senha
+                </label>
+
+                <input
+                  id="password"
+                  type="password"
+                  placeholder="Digite sua senha"
+                  value={password}
+                  onChange={handleChangePassword}
+                  className={`mt-3 w-full border-b bg-transparent py-3 text-sm outline-none transition ${
+                    darkMode
+                      ? "border-zinc-700 text-white placeholder:text-zinc-500 focus:border-white"
+                      : "border-zinc-300 text-black placeholder:text-zinc-400 focus:border-black"
+                  }`}
+                  autoComplete="current-password"
+                />
+              </div>
+
+              {error ? (
+                <p
+                  className={`border px-4 py-3 text-sm ${
+                    darkMode
+                      ? "border-red-900 bg-red-950 text-red-300"
+                      : "border-red-200 bg-red-50 text-red-600"
+                  }`}
+                  role="alert"
+                >
+                  {error}
+                </p>
+              ) : null}
+
+              <button
+                type="submit"
+                className={`mt-3 inline-flex min-h-[54px] w-full items-center justify-center gap-2 text-xs uppercase tracking-[0.26em] transition ${
+                  darkMode
+                    ? "bg-white text-black hover:opacity-85"
+                    : "bg-black text-white hover:opacity-85"
+                }`}
+              >
+                <LogIn className="h-4 w-4" />
+                Entrar
+              </button>
+            </form>
+
             <button
-              type="submit"
-              className="w-full bg-black text-white text-sm font-light py-3 px-6 uppercase tracking-wide rounded-lg hover:bg-gray-800 transition-colors duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50 cursor-pointer"
-              aria-label="Entrar na conta"
+              type="button"
+              onClick={handleLoginWithoutAccount}
+              className={`mt-4 inline-flex min-h-[54px] w-full items-center justify-center gap-2 border text-xs uppercase tracking-[0.26em] transition ${
+                darkMode
+                  ? "border-white text-white hover:bg-white hover:text-black"
+                  : "border-black text-black hover:bg-black hover:text-white"
+              }`}
             >
-              <LogIn className="w-4 h-4" />
-              Entrar
+              <LogIn className="h-4 w-4" />
+              Entrar sem conta
             </button>
-          </form>
-          <button
-            type="submit"
-            onClick={() => handleLoginwithoutAccount()}
-            className="w-full bg-black/60 text-white text-sm font-light py-3 px-6 uppercase tracking-wide rounded-lg hover:bg-black/50 transition-colors duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50 cursor-pointer mt-4"
-            aria-label="Entrar na conta"
-          >
-            <LogIn className="w-4 h-4" />
-            Entrar sem conta
-          </button>
-          <div className="flex justify-between items-center mt-6 text-sm font-light uppercase tracking-wide text-gray-600 cursor-pointer">
-            <button
-              onClick={() =>
-                alert(
-                  "Funcionalidade de recuperação de senha em desenvolvimento!"
-                )
-              }
-              className="hover:text-black hover:border-b border-black transition-colors cursor-pointer"
-              aria-label="Recuperar senha"
+
+            <div
+              className={`mt-10 flex flex-col gap-4 border-t pt-6 text-[11px] uppercase tracking-[0.22em] sm:flex-row sm:items-center sm:justify-between ${
+                darkMode ? "border-zinc-800" : "border-zinc-200"
+              }`}
             >
-              Esqueci minha senha
-            </button>
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className={`text-left transition ${
+                  darkMode
+                    ? "text-zinc-500 hover:text-white"
+                    : "text-zinc-500 hover:text-black"
+                }`}
+              >
+                Esqueci minha senha
+              </button>
+
+              <Link
+                to="/register"
+                className={`transition ${
+                  darkMode
+                    ? "text-zinc-500 hover:text-white"
+                    : "text-zinc-500 hover:text-black"
+                }`}
+              >
+                Criar conta
+              </Link>
+            </div>
+
             <Link
-              to="/register"
-              className="hover:text-black hover:border-b border-black transition-colors"
-              aria-label="Criar uma nova conta"
+              to="/home"
+              className={`mt-8 inline-flex text-[11px] uppercase tracking-[0.22em] transition ${
+                darkMode
+                  ? "text-zinc-500 hover:text-white"
+                  : "text-zinc-500 hover:text-black"
+                }`}
             >
-              Criar conta
+              Voltar para a loja
             </Link>
           </div>
-        </section>
+        </div>
       </div>
     </div>
   );
