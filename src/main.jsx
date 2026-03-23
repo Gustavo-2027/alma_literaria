@@ -1,20 +1,22 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
+import { RouterProvider } from "react-router-dom";
 
 import "./index.css";
-import { store } from "./redux/store";
-import { DarkModeProvider } from "./context/DarkModeContext";
-import {router} from "./routes/router"
-
+import { store } from "./app/store/store";
+import { router } from "./app/router/router";
+import { DarkModeProvider } from "./features/theme/model/ThemeContext";
+import SupabaseAuthProvider from "./app/providers/SupabaseAuthProvider";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
       <DarkModeProvider>
-        <RouterProvider router={router} />
+        <SupabaseAuthProvider>
+          <RouterProvider router={router} />
+        </SupabaseAuthProvider>
       </DarkModeProvider>
     </Provider>
-  </StrictMode>
+  </StrictMode>,
 );

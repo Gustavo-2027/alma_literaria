@@ -1,0 +1,15 @@
+
+> loja@0.0.0 build
+> vite build
+
+vite v7.0.5 building for production...
+transforming...
+✓ 1310 modules transformed.
+✗ Build failed in 1.61s
+error during build:
+Could not resolve "../../../shared/assets/img/livross.jpeg" from "src/widgets/books/ui/Banner.jsx"
+file: /home/gustavo/Área de trabalho/Work/React/Projetos/Alma/alma_literaria/src/widgets/books/ui/Banner.jsx
+    at getRollupError (file:///home/gustavo/%C3%81rea%20de%20trabalho/Work/React/Projetos/Alma/alma_literaria/node_modules/rollup/dist/es/shared/parseAst.js:401:41)
+    at error (file:///home/gustavo/%C3%81rea%20de%20trabalho/Work/React/Projetos/Alma/alma_literaria/node_modules/rollup/dist/es/shared/parseAst.js:397:42)
+    at ModuleLoader.handleInvalidResolvedId (file:///home/gustavo/%C3%81rea%20de%20trabalho/Work/React/Projetos/Alma/alma_literaria/node_modules/rollup/dist/es/shared/node-entry.js:21442:24)
+    at file:///home/gustavo/%C3%81rea%20de%20trabalho/Work/React/Projetos/Alma/alma_literaria/node_modules/rollup/dist/es/shared/node-entry.js:21402:26
