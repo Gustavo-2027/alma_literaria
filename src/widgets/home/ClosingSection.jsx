@@ -1,4 +1,16 @@
+import { memo } from "react";
 import { Link } from "react-router-dom";
+import Reveal from "../../shared/ui/Reveal";
+import {
+  Divider,
+  PrimaryLink,
+  SectionContainer,
+  SectionDescription,
+  SectionEyebrow,
+  SectionSpacing,
+  SectionTitle,
+  getHomeTheme,
+} from "./homePrimitives";
 
 const EXPERIENCE_ITEMS = [
   {
@@ -12,242 +24,317 @@ const EXPERIENCE_ITEMS = [
       "A leitura começa antes da compra, com curadoria, recortes e uma apresentação mais cuidadosa.",
   },
   {
-    title: "Base pronta para evoluir",
+    title: "Uma base pensada para evoluir",
     description:
-      "Uma estrutura preparada para receber filtros, pesquisa, coleções e experiências mais premium.",
+      "Um produto preparado para crescer com mais profundidade, sem perder clareza.",
   },
 ];
 
-function SectionHeader({
-  eyebrow,
-  title,
-  description,
+const ExperienceCard = memo(function ExperienceCard({
+  item,
   darkMode,
-  align = "left",
+  delay = 0,
 }) {
-  const eyebrowTextClass = darkMode ? "text-zinc-500" : "text-zinc-400";
-  const titleTextClass = darkMode ? "text-white" : "text-black";
-  const descriptionTextClass = darkMode ? "text-zinc-400" : "text-zinc-500";
+  const theme = getHomeTheme(darkMode);
 
   return (
-    <div
-      className={`max-w-3xl ${
-        align === "center" ? "mx-auto text-center" : "text-left"
-      }`}
+    <Reveal
+      as="article"
+      preset="soft-up"
+      duration={850}
+      delay={delay}
+      distance={14}
+      blur
+      threshold={0.12}
+      className="space-y-4"
     >
-      {eyebrow ? (
-        <p
-          className={`mb-5 text-[10px] uppercase tracking-[0.36em] ${eyebrowTextClass}`}
-        >
-          {eyebrow}
-        </p>
-      ) : null}
-
-      <h2
-        className={`text-3xl font-light leading-[1.08] tracking-[0.04em] sm:text-4xl lg:text-5xl ${titleTextClass}`}
-      >
-        {title}
-      </h2>
-
-      {description ? (
-        <p
-          className={`mt-6 max-w-2xl text-sm leading-8 sm:text-base ${descriptionTextClass} ${
-            align === "center" ? "mx-auto" : ""
-          }`}
-        >
-          {description}
-        </p>
-      ) : null}
-    </div>
-  );
-}
-
-function PrimaryLink({ to, children, darkMode }) {
-  const buttonClass = darkMode
-    ? "bg-white text-black hover:opacity-85"
-    : "bg-black text-white hover:opacity-85";
-
-  return (
-    <Link
-      to={to}
-      className={`inline-flex min-h-[56px] items-center justify-center px-10 text-[11px] uppercase tracking-[0.3em] transition-all duration-500 hover:tracking-[0.34em] ${buttonClass}`}
-    >
-      {children}
-    </Link>
-  );
-}
-
-function SecondaryLink({ to, children, darkMode }) {
-  const buttonClass = darkMode
-    ? "border-zinc-700 text-white hover:bg-white hover:text-black"
-    : "border-zinc-300 text-black hover:bg-black hover:text-white";
-
-  return (
-    <Link
-      to={to}
-      className={`inline-flex min-h-[56px] items-center justify-center border px-10 text-[11px] uppercase tracking-[0.3em] transition-all duration-500 ${buttonClass}`}
-    >
-      {children}
-    </Link>
-  );
-}
-
-function ExperienceCard({ item, darkMode }) {
-  return (
-    <div className="space-y-4">
-      <h3 className="text-2xl font-light leading-snug tracking-[0.03em]">
+      <h3 className="text-xl font-light tracking-[0.03em] sm:text-2xl">
         {item.title}
       </h3>
 
-      <p
-        className={`mx-auto max-w-sm text-sm leading-8 ${
-          darkMode ? "text-zinc-400" : "text-zinc-500"
-        }`}
-      >
+      <p className={`max-w-sm text-sm leading-8 ${theme.description}`}>
         {item.description}
       </p>
-    </div>
+    </Reveal>
   );
-}
+});
 
-export default function ClosingSection({
+const EditorialHighlight = memo(function EditorialHighlight({
+  book,
   darkMode,
-  editorialHighlight,
-  eyebrowClass,
-  descriptionClass,
 }) {
-  if (!editorialHighlight) return null;
+  const theme = getHomeTheme(darkMode);
+
+  if (!book) return null;
 
   return (
-    <>
-      <section className="mx-auto max-w-7xl px-4 py-28 sm:px-8 lg:px-12 lg:py-36">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-20">
-          <div className="overflow-hidden">
-            <img
-              src={editorialHighlight.image}
-              alt={editorialHighlight.name}
-              loading="lazy"
-              className="h-[32rem] w-full scale-[1.01] object-cover transition duration-700 ease-out hover:scale-[1.04] sm:h-[38rem] lg:h-[44rem]"
-            />
-          </div>
+    <section>
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-20">
+        <Reveal
+          as="div"
+          preset="soft-up"
+          duration={1000}
+          distance={24}
+          blur
+          threshold={0.1}
+          className="overflow-hidden"
+        >
+          <img
+            src={book.image}
+            alt={book.name}
+            loading="lazy"
+            className="h-[30rem] w-full scale-[1.01] object-cover transition duration-700 ease-out hover:scale-[1.04] sm:h-[36rem] lg:h-[42rem]"
+          />
+        </Reveal>
 
-          <div>
-            <p
-              className={`mb-5 text-[10px] uppercase tracking-[0.36em] ${eyebrowClass}`}
-            >
+        <Reveal
+          as="div"
+          preset="soft-up"
+          duration={1000}
+          delay={80}
+          distance={20}
+          blur
+          threshold={0.1}
+        >
+          <Reveal
+            as="div"
+            preset="fade"
+            duration={800}
+            threshold={0.1}
+          >
+            <SectionEyebrow className={`mb-6 ${theme.eyebrow}`}>
               Destaque editorial
-            </p>
+            </SectionEyebrow>
+          </Reveal>
 
-            <h2 className="max-w-2xl text-4xl font-light leading-[1.08] tracking-[0.04em] sm:text-5xl">
-              {editorialHighlight.name}
-            </h2>
+          <Reveal
+            as="div"
+            preset="soft-up"
+            duration={950}
+            delay={60}
+            distance={16}
+            blur
+            threshold={0.1}
+          >
+            <SectionTitle className="max-w-2xl text-4xl sm:text-5xl">
+              {book.name}
+            </SectionTitle>
+          </Reveal>
 
+          <Reveal
+            as="div"
+            preset="fade"
+            duration={850}
+            delay={110}
+            threshold={0.1}
+          >
             <p
-              className={`mt-5 text-[11px] uppercase tracking-[0.28em] ${eyebrowClass}`}
+              className={`mt-5 text-[11px] uppercase tracking-[0.28em] ${theme.eyebrow}`}
             >
-              {editorialHighlight.author}
+              {book.author}
             </p>
+          </Reveal>
 
-            <p
-              className={`mt-8 max-w-2xl text-sm leading-8 sm:text-base ${descriptionClass}`}
+          <Reveal
+            as="div"
+            preset="soft-up"
+            duration={900}
+            delay={160}
+            distance={14}
+            blur
+            threshold={0.1}
+          >
+            <SectionDescription
+              maxWidth="max-w-2xl"
+              className={`mt-8 ${theme.description}`}
             >
-              {editorialHighlight.description}
-            </p>
+              {book.description}
+            </SectionDescription>
+          </Reveal>
 
+          <Reveal
+            as="div"
+            preset="soft-up"
+            duration={900}
+            delay={220}
+            distance={12}
+            threshold={0.1}
+          >
             <blockquote
               className={`mt-10 border-l pl-6 text-base font-light italic leading-8 ${
                 darkMode
-                  ? "border-zinc-800 text-zinc-300"
+                  ? "border-zinc-700 text-zinc-300"
                   : "border-zinc-300 text-zinc-600"
               }`}
             >
               Uma leitura que amplia repertório, convida à permanência e reforça
-              a ideia de uma experiência mais contemplativa.
+              uma experiência mais contemplativa.
             </blockquote>
+          </Reveal>
 
-            <div className="mt-12">
-              <PrimaryLink
-                to={`/book/${editorialHighlight.id}`}
-                darkMode={darkMode}
-              >
-                Ver detalhes do livro
-              </PrimaryLink>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-24 sm:px-8 lg:px-12 lg:py-32">
-        <SectionHeader
-          darkMode={darkMode}
-          eyebrow="Experiência Alma Literária"
-          title="Uma interface pensada para valorizar leitura, contexto e descoberta."
-          description="Menos estímulo comercial, mais direção visual. Menos ruído, mais permanência."
-          align="center"
-        />
-
-        <div className="mt-16 grid grid-cols-1 gap-12 text-center md:grid-cols-3">
-          {EXPERIENCE_ITEMS.map((item) => (
-            <ExperienceCard
-              key={item.title}
-              item={item}
-              darkMode={darkMode}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-4xl px-4 py-24 text-center sm:px-8 lg:px-12">
-        <blockquote
-          className={`text-2xl font-light leading-relaxed italic sm:text-3xl ${
-            darkMode ? "text-zinc-300" : "text-zinc-700"
-          }`}
-        >
-          “A leitura do mundo precede a leitura da palavra.”
-        </blockquote>
-
-        <p
-          className={`mt-6 text-[10px] uppercase tracking-[0.3em] ${eyebrowClass}`}
-        >
-          Paulo Freire
-        </p>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-8 lg:px-12 lg:pb-32">
-        <div
-          className={`mb-12 h-px w-full ${darkMode ? "bg-zinc-900" : "bg-zinc-200"}`}
-        />
-
-        <div className="py-8 text-center sm:py-16">
-          <p
-            className={`mb-5 text-[10px] uppercase tracking-[0.36em] ${eyebrowClass}`}
+          <Reveal
+            as="div"
+            preset="soft-up"
+            duration={850}
+            delay={280}
+            distance={12}
+            threshold={0.1}
+            className="mt-12"
           >
-            Explorar catálogo
-          </p>
-
-          <h2 className="mx-auto max-w-4xl text-4xl font-light leading-[1.08] tracking-[0.04em] sm:text-5xl lg:text-6xl">
-            Continue a descoberta no catálogo completo da Alma Literária.
-          </h2>
-
-          <p
-            className={`mx-auto mt-8 max-w-2xl text-sm leading-8 sm:text-base ${descriptionClass}`}
-          >
-            A Home apresenta a atmosfera da marca. O catálogo aprofunda essa
-            experiência com toda a seleção disponível e abre espaço para uma
-            navegação mais ampla, refinada e intencional.
-          </p>
-
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-            <PrimaryLink to="/catalogo" darkMode={darkMode}>
-              Acessar catálogo
+            <PrimaryLink to={`/book/${book.id}`} darkMode={darkMode}>
+              Ver detalhes
             </PrimaryLink>
+          </Reveal>
+        </Reveal>
+      </div>
+    </section>
+  );
+});
 
-            <SecondaryLink to="/catalogo" darkMode={darkMode}>
-              Descobrir livros
-            </SecondaryLink>
-          </div>
-        </div>
-      </section>
+export default function ClosingSection({ darkMode, editorialHighlight }) {
+  const theme = getHomeTheme(darkMode);
+
+  if (!editorialHighlight) return null;
+
+  return (
+    <>
+      <SectionSpacing>
+        <SectionContainer>
+          <EditorialHighlight
+            book={editorialHighlight}
+            darkMode={darkMode}
+          />
+        </SectionContainer>
+      </SectionSpacing>
+
+      <SectionSpacing className="pt-0">
+        <SectionContainer>
+          <section className="text-center">
+            <Reveal
+              as="div"
+              preset="soft-up"
+              duration={950}
+              distance={20}
+              blur
+              threshold={0.08}
+            >
+              <SectionEyebrow className={`mb-6 ${theme.eyebrow}`}>
+                Experiência Alma Literária
+              </SectionEyebrow>
+
+              <SectionTitle className="mx-auto max-w-3xl text-3xl sm:text-4xl lg:text-5xl">
+                Uma interface pensada para valorizar leitura, contexto e
+                descoberta.
+              </SectionTitle>
+
+              <SectionDescription
+                maxWidth="max-w-2xl"
+                className={`mx-auto mt-8 ${theme.description}`}
+              >
+                Menos estímulo comercial, mais direção visual. Menos ruído, mais
+                permanência.
+              </SectionDescription>
+            </Reveal>
+
+            <div className="mt-16 grid grid-cols-1 gap-12 md:grid-cols-3">
+              {EXPERIENCE_ITEMS.map((item, index) => (
+                <ExperienceCard
+                  key={item.title}
+                  item={item}
+                  darkMode={darkMode}
+                  delay={index * 90}
+                />
+              ))}
+            </div>
+          </section>
+        </SectionContainer>
+      </SectionSpacing>
+
+      <SectionSpacing className="pt-0">
+        <SectionContainer>
+          <section className="text-center">
+            <Reveal
+              as="div"
+              preset="fade"
+              duration={1000}
+              threshold={0.08}
+            >
+              <blockquote
+                className={`mx-auto max-w-3xl text-2xl font-light leading-relaxed italic sm:text-3xl ${
+                  darkMode ? "text-zinc-300" : "text-zinc-700"
+                }`}
+              >
+                “A leitura do mundo precede a leitura da palavra.”
+              </blockquote>
+            </Reveal>
+
+            <Reveal
+              as="div"
+              preset="fade"
+              duration={900}
+              delay={100}
+              threshold={0.08}
+            >
+              <p
+                className={`mt-6 text-[10px] uppercase tracking-[0.3em] ${theme.eyebrow}`}
+              >
+                Paulo Freire
+              </p>
+            </Reveal>
+          </section>
+        </SectionContainer>
+      </SectionSpacing>
+
+      <SectionSpacing className="pt-0 pb-32">
+        <SectionContainer>
+          <section className="text-center">
+            <Reveal
+              as="div"
+              preset="fade"
+              duration={900}
+              threshold={0.08}
+            >
+              <Divider darkMode={darkMode} className="mb-14 w-full opacity-80" />
+            </Reveal>
+
+            <Reveal
+              as="div"
+              preset="soft-up"
+              duration={950}
+              delay={60}
+              distance={18}
+              blur
+              threshold={0.08}
+            >
+              <SectionTitle className="mx-auto max-w-4xl text-4xl sm:text-5xl lg:text-6xl">
+                Continue a descoberta no catálogo completo.
+              </SectionTitle>
+
+              <SectionDescription
+                maxWidth="max-w-2xl"
+                className={`mx-auto mt-8 ${theme.description}`}
+              >
+                A Home apresenta a atmosfera. O catálogo aprofunda a
+                experiência.
+              </SectionDescription>
+            </Reveal>
+
+            <Reveal
+              as="div"
+              preset="soft-up"
+              duration={850}
+              delay={160}
+              distance={12}
+              threshold={0.08}
+              className="mt-12"
+            >
+              <PrimaryLink to="/catalogo" darkMode={darkMode}>
+                Explorar catálogo
+              </PrimaryLink>
+            </Reveal>
+          </section>
+        </SectionContainer>
+      </SectionSpacing>
     </>
   );
 }

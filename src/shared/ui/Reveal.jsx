@@ -5,80 +5,149 @@ function usePrefersReducedMotion() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    if (
+      typeof window === "undefined" ||
+      typeof window.matchMedia !== "function"
+    ) {
       return undefined;
     }
 
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-    const handleChange = (event) => {
-      setPrefersReducedMotion(event.matches);
+    const updatePreference = () => {
+      setPrefersReducedMotion(mediaQuery.matches);
     };
 
-    setPrefersReducedMotion(mediaQuery.matches);
+    updatePreference();
 
     if (typeof mediaQuery.addEventListener === "function") {
-      mediaQuery.addEventListener("change", handleChange);
-      return () => mediaQuery.removeEventListener("change", handleChange);
+      mediaQuery.addEventListener("change", updatePreference);
+      return () => mediaQuery.removeEventListener("change", updatePreference);
     }
 
-    mediaQuery.addListener(handleChange);
-    return () => mediaQuery.removeListener(handleChange);
+    mediaQuery.addListener(updatePreference);
+    return () => mediaQuery.removeListener(updatePreference);
   }, []);
 
   return prefersReducedMotion;
 }
 
-const REVEAL_PRESETS = {
-  up: {
-    hidden: "translate-y-8 opacity-0",
-    visible: "translate-y-0 opacity-100",
-  },
-  "soft-up": {
-    hidden: "translate-y-5 opacity-0",
-    visible: "translate-y-0 opacity-100",
-  },
-  "soft-down": {
-    hidden: "-translate-y-5 opacity-0",
-    visible: "translate-y-0 opacity-100",
-  },
-  "soft-left": {
-    hidden: "translate-x-5 opacity-0",
-    visible: "translate-x-0 opacity-100",
-  },
-  "soft-right": {
-    hidden: "-translate-x-5 opacity-0",
-    visible: "translate-x-0 opacity-100",
-  },
-  fade: {
-    hidden: "opacity-0",
-    visible: "opacity-100",
-  },
-  none: {
-    hidden: "opacity-100",
-    visible: "opacity-100",
-  },
-};
+function getDistanceValue(distance) {
+  if (typeof distance === "number") {
+    return `${distance}px`;
+  }
 
-function getRevealPreset(preset) {
-  return REVEAL_PRESETS[preset] || REVEAL_PRESETS.up;
+  return distance || "24px";
 }
 
-function getRevealStateClass({
+function getRevealPreset(preset, distanceValue) {
+  const presets = {
+    up: {
+      hidden: {
+        opacity: 0,
+        transform: `translate3d(0, ${distanceValue}, 0)`,
+      },
+      visible: {
+        opacity: 1,
+        transform: "translate3d(0, 0, 0)",
+      },
+    },
+    "soft-up": {
+      hidden: {
+        opacity: 0,
+        transform: `translate3d(0, calc(${distanceValue} * 0.6), 0)`,
+      },
+      visible: {
+        opacity: 1,
+        transform: "translate3d(0, 0, 0)",
+      },
+    },
+    "soft-down": {
+      hidden: {
+        opacity: 0,
+        transform: `translate3d(0, calc(${distanceValue} * -0.6), 0)`,
+      },
+      visible: {
+        opacity: 1,
+        transform: "translate3d(0, 0, 0)",
+      },
+    },
+    "soft-left": {
+      hidden: {
+        opacity: 0,
+        transform: `translate3d(calc(${distanceValue} * 0.6), 0, 0)`,
+      },
+      visible: {
+        opacity: 1,
+        transform: "translate3d(0, 0, 0)",
+      },
+    },
+    "soft-right": {
+      hidden: {
+        opacity: 0,
+        transform: `translate3d(calc(${distanceValue} * -0.6), 0, 0)`,
+      },
+      visible: {
+        opacity: 1,
+        transform: "translate3d(0, 0, 0)",
+      },
+    },
+    fade: {
+      hidden: {
+        opacity: 0,
+        transform: "translate3d(0, 0, 0)",
+      },
+      visible: {
+        opacity: 1,
+        transform: "translate3d(0, 0, 0)",
+      },
+    },
+    none: {
+      hidden: {
+        opacity: 1,
+        transform: "translate3d(0, 0, 0)",
+      },
+      visible: {
+        opacity: 1,
+        transform: "translate3d(0, 0, 0)",
+      },
+    },
+  };
+
+  return presets[preset] || presets.up;
+}
+
+function getMotionStyle({
   visible,
   shouldDisableAnimation,
   animation,
+  delay,
+  duration,
+  blur,
+  blurAmount,
+  easing,
 }) {
   if (shouldDisableAnimation) {
-    return "translate-x-0 translate-y-0 opacity-100";
+    return {
+      opacity: 1,
+      transform: "translate3d(0, 0, 0)",
+      filter: "blur(0px)",
+    };
   }
 
-  return visible ? animation.visible : animation.hidden;
-}
+  const state = visible ? animation.visible : animation.hidden;
 
-function getBlurClass({ blur, visible, shouldDisableAnimation }) {
-  if (!blur || shouldDisableAnimation) return "";
-  return visible ? "blur-0" : "blur-[4px]";
+  return {
+    opacity: state.opacity,
+    transform: state.transform,
+    filter: blur ? (visible ? "blur(0px)" : `blur(${blurAmount}px)`) : "none",
+    transitionProperty: "opacity, transform, filter",
+    transitionDuration: `${duration}ms`,
+    transitionDelay: `${delay}ms`,
+    transitionTimingFunction: easing,
+    backfaceVisibility: "hidden",
+    WebkitFontSmoothing: "antialiased",
+  };
 }
 
 export default function Reveal({
@@ -91,9 +160,12 @@ export default function Reveal({
   rootMargin = "0px 0px -10% 0px",
   once = true,
   delay = 0,
-  duration = 800,
+  duration = 900,
   disabled = false,
   blur = false,
+  blurAmount = 6,
+  distance = 24,
+  easing = "cubic-bezier(0.16, 1, 0.3, 1)",
 }) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const shouldDisableAnimation = disabled || prefersReducedMotion;
@@ -106,33 +178,40 @@ export default function Reveal({
     disabled: shouldDisableAnimation,
   });
 
-  const animation = useMemo(() => getRevealPreset(preset), [preset]);
+  const distanceValue = useMemo(() => getDistanceValue(distance), [distance]);
 
-  const stateClass = getRevealStateClass({
-    visible,
-    shouldDisableAnimation,
-    animation,
-  });
+  const animation = useMemo(
+    () => getRevealPreset(preset, distanceValue),
+    [preset, distanceValue]
+  );
 
-  const blurClass = getBlurClass({
-    blur,
-    visible,
-    shouldDisableAnimation,
-  });
-
-  const style = useMemo(() => {
-    if (shouldDisableAnimation) return undefined;
-
-    return {
-      transitionDuration: `${duration}ms`,
-      transitionDelay: `${delay}ms`,
-    };
-  }, [delay, duration, shouldDisableAnimation]);
+  const style = useMemo(
+    () =>
+      getMotionStyle({
+        visible,
+        shouldDisableAnimation,
+        animation,
+        delay,
+        duration,
+        blur,
+        blurAmount,
+        easing,
+      }),
+    [
+      visible,
+      shouldDisableAnimation,
+      animation,
+      delay,
+      duration,
+      blur,
+      blurAmount,
+      easing,
+    ]
+  );
 
   const classes = [
-    "transform-gpu transition-all ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity,transform,filter]",
-    stateClass,
-    blurClass,
+    "motion-reveal",
+    !shouldDisableAnimation ? "will-change-[opacity,transform,filter]" : "",
     className,
   ]
     .filter(Boolean)

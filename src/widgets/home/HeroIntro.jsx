@@ -1,16 +1,15 @@
-import { Link } from "react-router-dom";
 import Reveal from "../../shared/ui/Reveal";
-
-function getHeroTheme(darkMode) {
-  return {
-    primaryButton: darkMode
-      ? "bg-white text-black hover:opacity-85"
-      : "bg-black text-white hover:opacity-85",
-    secondaryButton: darkMode
-      ? "border-zinc-700 text-white hover:bg-white hover:text-black"
-      : "border-zinc-300 text-black hover:bg-black hover:text-white",
-  };
-}
+import {
+  Divider,
+  PrimaryLink,
+  SecondaryAnchor,
+  SectionContainer,
+  SectionDescription,
+  SectionEyebrow,
+  SectionSpacing,
+  SectionTitle,
+  getHomeTheme,
+} from "./homePrimitives";
 
 function getWelcomeMessage(currentUser) {
   if (currentUser?.name) {
@@ -20,85 +19,103 @@ function getWelcomeMessage(currentUser) {
   return "Bem-vindo à Alma Literária.";
 }
 
-function HeroButton({ to, children, className = "", darkMode }) {
-  const theme = getHeroTheme(darkMode);
-
-  return (
-    <Link
-      to={to}
-      className={`inline-flex min-h-[56px] items-center justify-center px-10 text-[11px] uppercase tracking-[0.3em] transition-all duration-500 hover:tracking-[0.34em] ${theme.primaryButton} ${className}`}
-    >
-      {children}
-    </Link>
-  );
-}
-
-function HeroAnchor({ href, children, darkMode, className = "" }) {
-  const theme = getHeroTheme(darkMode);
-
-  return (
-    <a
-      href={href}
-      className={`inline-flex min-h-[56px] items-center justify-center border px-10 text-[11px] uppercase tracking-[0.3em] transition-all duration-500 ${theme.secondaryButton} ${className}`}
-    >
-      {children}
-    </a>
-  );
-}
-
-function HeroEyebrow({ children, className }) {
-  return (
-    <p className={`mb-6 text-[10px] uppercase tracking-[0.42em] ${className}`}>
-      {children}
-    </p>
-  );
-}
-
-function HeroDivider({ className }) {
-  return <div className={`mx-auto my-10 h-px w-12 opacity-60 ${className}`} />;
-}
-
-export default function HeroIntro({
-  darkMode,
-  currentUser,
-  eyebrowClass,
-  dividerClass,
-  descriptionClass,
-}) {
+export default function HeroIntro({ darkMode, currentUser }) {
+  const theme = getHomeTheme(darkMode);
   const welcomeMessage = getWelcomeMessage(currentUser);
 
   return (
-    <Reveal
-      as="section"
-      className="relative mx-auto max-w-7xl px-4 py-24 sm:px-8 lg:px-12 lg:py-32"
-    >
-      <div className="mx-auto max-w-5xl text-center">
-        <HeroEyebrow className={eyebrowClass}>Alma Literária</HeroEyebrow>
+    <SectionSpacing className="pt-20 sm:pt-24 lg:pt-28">
+      <SectionContainer>
+        <section className="mx-auto max-w-5xl text-center">
+          <Reveal
+            as="div"
+            preset="fade"
+            duration={900}
+            delay={0}
+            threshold={0.08}
+          >
+            <SectionEyebrow className={`mb-6 ${theme.eyebrow}`}>
+              Alma Literária
+            </SectionEyebrow>
+          </Reveal>
 
-        <h1 className="text-5xl font-light leading-[1.06] tracking-[0.04em] sm:text-6xl lg:text-7xl">
-          Livros que pedem mais tempo, mais silêncio e mais atenção.
-        </h1>
+          <Reveal
+            as="div"
+            preset="soft-up"
+            duration={1000}
+            delay={80}
+            distance={20}
+            blur
+            threshold={0.08}
+          >
+            <SectionTitle
+              as="h1"
+              className="mx-auto max-w-5xl text-5xl leading-[1.02] sm:text-6xl lg:text-7xl"
+            >
+              Livros que pedem mais tempo, mais silêncio e mais atenção.
+            </SectionTitle>
+          </Reveal>
 
-        <HeroDivider className={dividerClass} />
+          <Reveal
+            as="div"
+            preset="fade"
+            duration={900}
+            delay={140}
+            threshold={0.08}
+          >
+            <Divider
+              darkMode={darkMode}
+              className="mx-auto my-10 w-14 opacity-70"
+            />
+          </Reveal>
 
-        <p
-          className={`mx-auto max-w-2xl text-sm leading-8 sm:text-base lg:text-lg ${descriptionClass}`}
-        >
-          {welcomeMessage} Uma livraria digital com olhar editorial, curadoria
-          sensível e uma experiência pensada para quem prefere descobrir
-          leituras com mais intenção.
-        </p>
+          <Reveal
+            as="div"
+            preset="soft-up"
+            duration={950}
+            delay={180}
+            distance={16}
+            blur
+            threshold={0.08}
+          >
+            <SectionDescription
+              maxWidth="max-w-2xl"
+              className={`mx-auto ${theme.description}`}
+            >
+              {welcomeMessage} Uma livraria digital com olhar editorial,
+              curadoria sensível e uma experiência pensada para quem prefere
+              descobrir leituras com mais intenção.
+            </SectionDescription>
+          </Reveal>
 
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-          <HeroButton to="/catalogo" darkMode={darkMode}>
-            Explorar catálogo
-          </HeroButton>
+          <Reveal
+            as="div"
+            preset="soft-up"
+            duration={900}
+            delay={260}
+            distance={14}
+            threshold={0.08}
+          >
+            <div className="mt-12 flex flex-col items-stretch justify-center gap-4 sm:flex-row sm:items-center">
+              <PrimaryLink
+                to="/catalogo"
+                darkMode={darkMode}
+                fullWidthOnMobile
+              >
+                Explorar catálogo
+              </PrimaryLink>
 
-          <HeroAnchor href="#curadoria" darkMode={darkMode}>
-            Ver curadoria
-          </HeroAnchor>
-        </div>
-      </div>
-    </Reveal>
+              <SecondaryAnchor
+                href="#curadoria"
+                darkMode={darkMode}
+                fullWidthOnMobile
+              >
+                Ver curadoria
+              </SecondaryAnchor>
+            </div>
+          </Reveal>
+        </section>
+      </SectionContainer>
+    </SectionSpacing>
   );
 }

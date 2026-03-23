@@ -103,7 +103,7 @@ export default function BookDetailsPage() {
           </p>
 
           <Link
-            to="/home"
+            to="/catalogo"
             className={`mt-6 inline-flex items-center gap-2 text-sm uppercase tracking-[0.18em] transition ${
               darkMode
                 ? "text-zinc-400 hover:text-white"
@@ -111,7 +111,7 @@ export default function BookDetailsPage() {
             }`}
           >
             <ChevronLeft className="h-4 w-4" />
-            Voltar à biblioteca
+            Voltar ao catálogo
           </Link>
         </div>
       </div>
@@ -128,7 +128,7 @@ export default function BookDetailsPage() {
 
       <div className="mx-auto max-w-7xl">
         <Link
-          to="/home"
+          to="/catalogo"
           className={`mb-10 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] transition ${
             darkMode
               ? "text-zinc-400 hover:text-white"
@@ -136,7 +136,7 @@ export default function BookDetailsPage() {
           }`}
         >
           <ChevronLeft className="h-4 w-4" />
-          Voltar à biblioteca
+          Voltar ao catálogo
         </Link>
 
         <section className="mb-20 grid grid-cols-1 gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-20">

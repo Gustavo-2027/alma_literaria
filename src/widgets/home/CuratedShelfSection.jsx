@@ -1,237 +1,187 @@
+import { memo } from "react";
 import { Link } from "react-router-dom";
 import Reveal from "../../shared/ui/Reveal";
+import {
+  Divider,
+  PrimaryLink,
+  SectionContainer,
+  SectionDescription,
+  SectionEyebrow,
+  SectionSpacing,
+  SectionTitle,
+  getHomeTheme,
+} from "./homePrimitives";
 
-/* =========================
-   HELPERS
-========================= */
 function safeArray(value) {
   return Array.isArray(value) ? value : [];
 }
 
-function sectionTextClasses(darkMode) {
-  return {
-    eyebrow: darkMode ? "text-zinc-500" : "text-zinc-400",
-    description: darkMode ? "text-zinc-400" : "text-zinc-500",
-    muted: darkMode ? "text-zinc-600" : "text-zinc-400",
-    emphasis: darkMode ? "text-zinc-300" : "text-zinc-700",
-    panel: darkMode ? "border-zinc-800 bg-zinc-950" : "border-zinc-200 bg-zinc-50",
-    border: darkMode ? "border-zinc-800" : "border-zinc-200",
-    surface: darkMode ? "bg-zinc-950" : "bg-zinc-50",
-  };
-}
-
-function sectionWrapperClass(extraClass = "") {
-  return `mx-auto max-w-7xl px-4 py-24 sm:px-8 lg:px-12 lg:py-32 ${extraClass}`.trim();
-}
-
-/* =========================
-   SHARED UI
-========================= */
-function SectionHeader({
-  eyebrow,
-  title,
-  description,
-  darkMode,
-  align = "left",
-}) {
-  const text = sectionTextClasses(darkMode);
-
-  return (
-    <div
-      className={`max-w-3xl ${
-        align === "center" ? "mx-auto text-center" : "text-left"
-      }`}
-    >
-      {eyebrow ? (
-        <p
-          className={`mb-5 text-[10px] uppercase tracking-[0.36em] ${text.eyebrow}`}
-        >
-          {eyebrow}
-        </p>
-      ) : null}
-
-      <h2 className="text-3xl font-light leading-[1.08] tracking-[0.04em] sm:text-4xl lg:text-5xl">
-        {title}
-      </h2>
-
-      {description ? (
-        <p
-          className={`mt-6 max-w-2xl text-sm leading-8 sm:text-base ${text.description}`}
-        >
-          {description}
-        </p>
-      ) : null}
-    </div>
-  );
-}
-
-function PrimaryLink({ to, children, darkMode, className = "" }) {
-  const themeClass = darkMode
-    ? "bg-white text-black hover:opacity-85"
-    : "bg-black text-white hover:opacity-85";
-
-  return (
-    <Link
-      to={to}
-      className={`inline-flex min-h-[56px] items-center justify-center px-10 text-[11px] uppercase tracking-[0.3em] transition-all duration-500 hover:tracking-[0.34em] ${themeClass} ${className}`}
-    >
-      {children}
-    </Link>
-  );
-}
-
-/* =========================
-   BOOK CARD
-========================= */
-function BookCard({
+const BookCard = memo(function BookCard({
   book,
   darkMode,
   label = "Curadoria da semana",
   showDescription = false,
+  imageClassName = "",
+  delay = 0,
 }) {
-  const text = sectionTextClasses(darkMode);
+  const theme = getHomeTheme(darkMode);
 
   if (!book) return null;
 
   return (
-    <Link
-      to={`/book/${book.id}`}
-      className="group block transition-transform duration-500 hover:-translate-y-1"
+    <Reveal
+      as="div"
+      preset="soft-up"
+      duration={850}
+      delay={delay}
+      distance={14}
+      blur
+      threshold={0.12}
     >
-      <div className="overflow-hidden">
-        <img
-          src={book.image}
-          alt={book.name}
-          loading="lazy"
-          className="h-[26rem] w-full scale-[1.01] object-cover transition duration-700 ease-out group-hover:scale-[1.05]"
-        />
-      </div>
+      <Link
+        to={`/book/${book.id}`}
+        className="group block"
+        aria-label={`Ver detalhes do livro ${book.name}`}
+      >
+        <div className="overflow-hidden">
+          <img
+            src={book.image}
+            alt={book.name}
+            loading="lazy"
+            className={`h-[24rem] w-full scale-[1.01] object-cover transition duration-700 ease-out group-hover:scale-[1.04] sm:h-[27rem] ${imageClassName}`}
+          />
+        </div>
 
-      <div className="mt-6 space-y-2">
-        <p className={`text-[10px] uppercase tracking-[0.32em] ${text.eyebrow}`}>
-          {label}
-        </p>
-
-        <h3 className="text-2xl font-light leading-snug tracking-[0.03em] transition duration-500 group-hover:opacity-70">
-          {book.name}
-        </h3>
-
-        <p className={`text-sm ${text.description}`}>{book.author}</p>
-
-        {showDescription ? (
-          <p className={`line-clamp-3 pt-2 text-sm leading-7 ${text.description}`}>
-            {book.description}
-          </p>
-        ) : null}
-
-        <p
-          className={`pt-2 text-[10px] uppercase tracking-[0.3em] transition-all duration-500 group-hover:tracking-[0.34em] ${text.emphasis}`}
-        >
-          Ver detalhes
-        </p>
-      </div>
-    </Link>
-  );
-}
-
-/* =========================
-   READING OF THE WEEK
-========================= */
-function ReadingWeekCard({ book, darkMode }) {
-  const text = sectionTextClasses(darkMode);
-
-  if (!book) return null;
-
-  return (
-    <article
-      className={`grid grid-cols-1 overflow-hidden border lg:grid-cols-[0.78fr_1.22fr] ${text.panel}`}
-    >
-      <div className="overflow-hidden">
-        <img
-          src={book.image}
-          alt={book.name}
-          loading="lazy"
-          className="h-[30rem] w-full scale-[1.01] object-cover transition duration-700 ease-out hover:scale-[1.04] sm:h-[36rem] lg:h-full"
-        />
-      </div>
-
-      <div className="flex flex-col justify-between p-8 sm:p-10 lg:p-14">
-        <div>
-          <p className={`text-[10px] uppercase tracking-[0.34em] ${text.eyebrow}`}>
-            Leitura da semana
+        <div className="mt-6">
+          <p className={`text-[10px] uppercase tracking-[0.32em] ${theme.eyebrow}`}>
+            {label}
           </p>
 
-          <h3 className="mt-5 max-w-2xl text-3xl font-light leading-[1.04] tracking-[0.04em] sm:text-4xl lg:text-5xl">
+          <h3 className="mt-3 text-[1.65rem] font-light leading-[1.18] tracking-[0.03em] transition-opacity duration-500 group-hover:opacity-70">
             {book.name}
           </h3>
 
-          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
-            <p className={`text-[11px] uppercase tracking-[0.24em] ${text.eyebrow}`}>
-              {book.author}
+          <p className={`mt-2 text-sm ${theme.description}`}>{book.author}</p>
+
+          {showDescription ? (
+            <p
+              className={`mt-4 line-clamp-3 max-w-md text-sm leading-8 ${theme.description}`}
+            >
+              {book.description}
             </p>
+          ) : null}
 
-            {book.moods?.[0] ? (
-              <span className={`text-[10px] uppercase tracking-[0.28em] ${text.eyebrow}`}>
-                Atmosfera: {book.moods[0]}
-              </span>
-            ) : null}
-          </div>
-
-          <p className={`mt-8 max-w-xl text-sm leading-8 sm:text-base ${text.description}`}>
-            {book.description}
-          </p>
-
-          <blockquote
-            className={`mt-10 border-l pl-5 text-base font-light italic leading-8 ${
-              darkMode ? "border-zinc-700" : "border-zinc-300"
-            } ${text.emphasis}`}
+          <span
+            className={`mt-5 inline-block text-[10px] uppercase tracking-[0.3em] transition-all duration-500 group-hover:tracking-[0.34em] ${theme.emphasis}`}
           >
-            Uma leitura para desacelerar, permanecer mais tempo na linguagem e
-            transformar a semana em um espaço de atenção.
-          </blockquote>
+            Ver detalhes
+          </span>
+        </div>
+      </Link>
+    </Reveal>
+  );
+});
+
+const ReadingWeekCard = memo(function ReadingWeekCard({ book, darkMode }) {
+  const theme = getHomeTheme(darkMode);
+
+  if (!book) return null;
+
+  return (
+    <article className={`border ${theme.panel}`}>
+      <div className="grid grid-cols-1 lg:grid-cols-[0.76fr_1.24fr]">
+        <div className="overflow-hidden">
+          <img
+            src={book.image}
+            alt={book.name}
+            loading="lazy"
+            className="h-[28rem] w-full scale-[1.01] object-cover transition duration-700 ease-out hover:scale-[1.03] sm:h-[34rem] lg:h-full"
+          />
         </div>
 
-        <div className="mt-10 flex flex-wrap items-center gap-4">
-          <PrimaryLink to={`/book/${book.id}`} darkMode={darkMode}>
-            Ler com calma
-          </PrimaryLink>
+        <div className="flex flex-col justify-between px-6 py-8 sm:px-10 sm:py-10 lg:px-14 lg:py-14">
+          <div>
+            <SectionEyebrow className={theme.eyebrow}>
+              Leitura da semana
+            </SectionEyebrow>
 
-          <span className={`text-[10px] uppercase tracking-[0.28em] ${text.eyebrow}`}>
-            Recomendação editorial
-          </span>
+            <h3 className="mt-5 max-w-2xl text-3xl font-light leading-[1.04] tracking-[0.04em] sm:text-4xl lg:text-5xl">
+              {book.name}
+            </h3>
+
+            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
+              <p className={`text-[11px] uppercase tracking-[0.24em] ${theme.eyebrow}`}>
+                {book.author}
+              </p>
+
+              {book.moods?.[0] ? (
+                <span
+                  className={`text-[10px] uppercase tracking-[0.28em] ${theme.eyebrow}`}
+                >
+                  Atmosfera: {book.moods[0]}
+                </span>
+              ) : null}
+            </div>
+
+            <SectionDescription
+              maxWidth="max-w-xl"
+              className={`mt-8 ${theme.description}`}
+            >
+              {book.description}
+            </SectionDescription>
+
+            <blockquote
+              className={`mt-10 border-l pl-5 text-base font-light italic leading-8 ${
+                darkMode ? "border-zinc-700" : "border-zinc-300"
+              } ${theme.emphasis}`}
+            >
+              Uma leitura para desacelerar, permanecer mais tempo na linguagem e
+              transformar a semana em um espaço de atenção.
+            </blockquote>
+          </div>
+
+          <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+            <PrimaryLink to={`/book/${book.id}`} darkMode={darkMode}>
+              Ler com calma
+            </PrimaryLink>
+
+            <span className={`text-[10px] uppercase tracking-[0.28em] ${theme.eyebrow}`}>
+              Recomendação editorial
+            </span>
+          </div>
         </div>
       </div>
     </article>
   );
-}
+});
 
-/* =========================
-   COLLECTION CARD
-========================= */
-function EditorialCollectionCard({ item, index, darkMode }) {
-  const text = sectionTextClasses(darkMode);
+const EditorialCollectionCard = memo(function EditorialCollectionCard({
+  item,
+  index,
+  darkMode,
+}) {
+  const theme = getHomeTheme(darkMode);
 
   return (
-    <article className="group transition-all duration-500 hover:-translate-y-1 hover:opacity-75">
-      <span className={`text-[10px] uppercase tracking-[0.3em] ${text.muted}`}>
+    <article className="group">
+      <span className={`text-[10px] uppercase tracking-[0.3em] ${theme.muted}`}>
         {String(index + 1).padStart(2, "0")}
       </span>
 
-      <h3 className="mt-5 text-2xl font-light leading-snug tracking-[0.04em]">
+      <h3 className="mt-5 text-2xl font-light leading-[1.18] tracking-[0.03em] transition-opacity duration-500 group-hover:opacity-70">
         {item.title}
       </h3>
 
-      <p className={`mt-4 max-w-sm text-sm leading-8 ${text.description}`}>
+      <p className={`mt-4 max-w-sm text-sm leading-8 ${theme.description}`}>
         {item.description}
       </p>
     </article>
   );
-}
+});
 
-/* =========================
-   ATMOSPHERE CARD
-========================= */
-function AtmosphereCard({ item, darkMode }) {
+const AtmosphereCard = memo(function AtmosphereCard({ item, darkMode }) {
+  const theme = getHomeTheme(darkMode);
+
   const hoverClass = darkMode
     ? "border-zinc-800 hover:bg-white hover:text-black"
     : "border-zinc-200 hover:bg-black hover:text-white";
@@ -243,9 +193,9 @@ function AtmosphereCard({ item, darkMode }) {
   return (
     <Link
       to={`/catalogo?atmosfera=${item.slug}`}
-      className={`group border p-8 transition-all duration-500 hover:-translate-y-1 ${hoverClass}`}
+      className={`group block border p-8 transition-all duration-500 hover:-translate-y-[2px] ${hoverClass}`}
     >
-      <p className="text-sm uppercase tracking-[0.28em]">{item.title}</p>
+      <p className="text-[11px] uppercase tracking-[0.3em]">{item.title}</p>
 
       <p
         className={`mt-4 max-w-xs text-sm leading-7 transition-colors duration-500 ${descriptionClass}`}
@@ -253,17 +203,59 @@ function AtmosphereCard({ item, darkMode }) {
         {item.description}
       </p>
 
-      <span className="mt-6 block text-[10px] uppercase tracking-[0.28em] opacity-70">
+      <span className="mt-6 inline-block text-[10px] uppercase tracking-[0.28em] opacity-70">
         Explorar leituras nesse ritmo
       </span>
     </Link>
   );
+});
+
+function SectionIntro({
+  darkMode,
+  eyebrow,
+  title,
+  description,
+  align = "left",
+  action,
+}) {
+  const theme = getHomeTheme(darkMode);
+  const centered = align === "center";
+
+  return (
+    <Reveal
+      as="div"
+      preset="soft-up"
+      duration={950}
+      distance={20}
+      blur
+      threshold={0.08}
+      className={`flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between ${
+        centered ? "text-center" : "text-left"
+      }`}
+    >
+      <div className={`${centered ? "mx-auto" : ""} max-w-3xl`}>
+        <SectionEyebrow className={`mb-6 ${theme.eyebrow}`}>
+          {eyebrow}
+        </SectionEyebrow>
+
+        <SectionTitle className={centered ? "mx-auto" : ""}>
+          {title}
+        </SectionTitle>
+
+        <SectionDescription
+          maxWidth="max-w-2xl"
+          className={`mt-8 ${theme.description} ${centered ? "mx-auto" : ""}`}
+        >
+          {description}
+        </SectionDescription>
+      </div>
+
+      {action ? <div className="lg:shrink-0">{action}</div> : null}
+    </Reveal>
+  );
 }
 
-/* =========================
-   MAIN SECTION
-========================= */
-export default function CuratedShelfSection({
+function CuratedShelfSection({
   darkMode,
   featuredBooks = [],
   readingOfTheWeek = null,
@@ -271,7 +263,7 @@ export default function CuratedShelfSection({
   editorialCollections = [],
   atmosphereCards = [],
 }) {
-  const text = sectionTextClasses(darkMode);
+  const theme = getHomeTheme(darkMode);
 
   const featured = safeArray(featuredBooks);
   const classics = safeArray(brazilianClassics);
@@ -280,93 +272,223 @@ export default function CuratedShelfSection({
 
   return (
     <>
-      <Reveal as="section" className={sectionWrapperClass()}>
-        <div id="curadoria">
-          <SectionHeader
-            darkMode={darkMode}
-            eyebrow="Curadoria da semana"
-            title="Uma seleção enxuta para começar a descoberta."
-            description="A Home não precisa mostrar tudo. Ela deve apresentar recortes mais claros, mais belos e mais intencionais."
-          />
+      <SectionSpacing className="pt-10 sm:pt-12 lg:pt-14">
+        <SectionContainer>
+          <section id="curadoria" className="scroll-mt-24">
+            <SectionIntro
+              darkMode={darkMode}
+              eyebrow="Curadoria da semana"
+              title="Uma seleção enxuta para começar a descoberta."
+              description="A Home não precisa mostrar tudo. Ela deve apresentar recortes mais claros, mais belos e mais intencionais."
+            />
 
-          <div className="mt-14 grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-3">
-            {featured.map((book) => (
-              <BookCard key={book.id} book={book} darkMode={darkMode} />
-            ))}
-          </div>
+            <div className="mt-14 grid grid-cols-1 gap-x-10 gap-y-14 md:grid-cols-2 xl:grid-cols-3">
+              {featured.map((book, index) => (
+                <BookCard
+                  key={book.id}
+                  book={book}
+                  darkMode={darkMode}
+                  delay={index * 80}
+                />
+              ))}
+            </div>
 
-          <div className="mt-14">
-            <PrimaryLink to="/catalogo" darkMode={darkMode}>
-              Ver catálogo completo
-            </PrimaryLink>
-          </div>
-        </div>
-      </Reveal>
+            <Reveal
+              as="div"
+              preset="soft-up"
+              duration={850}
+              delay={120}
+              distance={12}
+              threshold={0.08}
+              className="mt-14"
+            >
+              <PrimaryLink to="/catalogo" darkMode={darkMode}>
+                Ver catálogo completo
+              </PrimaryLink>
+            </Reveal>
+          </section>
+        </SectionContainer>
+      </SectionSpacing>
 
       {readingOfTheWeek ? (
-        <Reveal className={sectionWrapperClass()}>
-          <SectionHeader
-            darkMode={darkMode}
-            eyebrow="Leitura da semana"
-            title="Uma escolha para desacelerar a leitura."
-            description="Mais do que um destaque, esta é uma recomendação para acompanhar a semana com atenção, linguagem e permanência."
-          />
+        <SectionSpacing className="pt-0">
+          <SectionContainer>
+            <section>
+              <SectionIntro
+                darkMode={darkMode}
+                eyebrow="Leitura da semana"
+                title="Uma escolha para desacelerar a leitura."
+                description="Mais do que um destaque, esta é uma recomendação para acompanhar a semana com atenção, linguagem e permanência."
+              />
 
-          <div className="mt-16">
-            <ReadingWeekCard book={readingOfTheWeek} darkMode={darkMode} />
-          </div>
-        </Reveal>
+              <Reveal
+                as="div"
+                preset="soft-up"
+                duration={1000}
+                distance={24}
+                blur
+                threshold={0.1}
+                className="mt-16"
+              >
+                <ReadingWeekCard
+                  book={readingOfTheWeek}
+                  darkMode={darkMode}
+                />
+              </Reveal>
+            </section>
+          </SectionContainer>
+        </SectionSpacing>
       ) : null}
 
-      <Reveal className={sectionWrapperClass()}>
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-end lg:gap-20">
-          <SectionHeader
-            darkMode={darkMode}
-            eyebrow="Literatura brasileira"
-            title="Clássicos que ajudam a compreender o Brasil."
-            description="Uma seleção de obras que atravessam gerações e revelam aspectos profundos da experiência brasileira."
-          />
-
-          <div className="lg:justify-self-end">
-            <PrimaryLink to="/catalogo" darkMode={darkMode}>
-              Explorar seleção
-            </PrimaryLink>
-          </div>
-        </div>
-
-        <div className="mt-16 grid grid-cols-1 gap-12 sm:grid-cols-2 xl:grid-cols-4">
-          {classics.map((book) => (
-            <BookCard
-              key={book.id}
-              book={book}
+      <SectionSpacing className="pt-0">
+        <SectionContainer>
+          <section>
+            <SectionIntro
               darkMode={darkMode}
-              label="Clássico brasileiro"
-              showDescription
+              eyebrow="Literatura brasileira"
+              title="Clássicos que ajudam a compreender o Brasil."
+              description="Uma seleção de obras que atravessam gerações e revelam aspectos profundos da experiência brasileira."
+              action={
+                <PrimaryLink to="/catalogo" darkMode={darkMode}>
+                  Explorar seleção
+                </PrimaryLink>
+              }
             />
-          ))}
-        </div>
-      </Reveal>
 
-      <Reveal className={sectionWrapperClass(text.surface)}>
-        <SectionHeader
-          darkMode={darkMode}
-          eyebrow="Coleções editoriais"
-          title="Caminhos de leitura pensados por repertório e intenção."
-          description="Essas entradas funcionam como convites mais sensíveis para explorar leituras com identidade própria."
-        />
+            <div className="mt-16 grid grid-cols-1 gap-x-10 gap-y-14 sm:grid-cols-2 xl:grid-cols-4">
+              {classics.map((book, index) => (
+                <BookCard
+                  key={book.id}
+                  book={book}
+                  darkMode={darkMode}
+                  label="Clássico brasileiro"
+                  showDescription
+                  imageClassName="h-[22rem] sm:h-[24rem]"
+                  delay={index * 70}
+                />
+              ))}
+            </div>
+          </section>
+        </SectionContainer>
+      </SectionSpacing>
 
-        <div className="mt-14 grid grid-cols-1 gap-12 md:grid-cols-3">
-          {collections.map((item, index) => (
-            <EditorialCollectionCard
-              key={item.id}
-              item={item}
-              index={index}
-              darkMode={darkMode}
-            />
-          ))}
-        </div>
-      </Reveal>
+      {collections.length > 0 ? (
+        <SectionSpacing className="pt-0">
+          <SectionContainer>
+            <section
+              className={`border px-6 py-8 sm:px-10 sm:py-10 lg:px-14 lg:py-14 ${theme.panel}`}
+            >
+              <SectionIntro
+                darkMode={darkMode}
+                eyebrow="Coleções editoriais"
+                title="Caminhos de leitura pensados por repertório e intenção."
+                description="Essas entradas funcionam como convites mais sensíveis para explorar leituras com identidade própria."
+              />
 
+              <div className="mt-14 grid grid-cols-1 gap-12 md:grid-cols-3">
+                {collections.map((item, index) => (
+                  <Reveal
+                    key={item.id ?? item.slug ?? item.title}
+                    as="div"
+                    preset="soft-up"
+                    duration={900}
+                    delay={index * 90}
+                    distance={16}
+                    blur
+                    threshold={0.1}
+                  >
+                    <EditorialCollectionCard
+                      item={item}
+                      index={index}
+                      darkMode={darkMode}
+                    />
+                  </Reveal>
+                ))}
+              </div>
+            </section>
+          </SectionContainer>
+        </SectionSpacing>
+      ) : null}
+
+      {atmospheres.length > 0 ? (
+        <SectionSpacing className="pt-0">
+          <SectionContainer>
+            <section>
+              <SectionIntro
+                darkMode={darkMode}
+                eyebrow="Atmosferas de leitura"
+                title="Descubra livros pelo ritmo, pelo clima e pela intenção."
+                description="Nem toda escolha começa pelo gênero. Às vezes, ela começa pela atmosfera certa para o momento."
+                align="center"
+              />
+
+              <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {atmospheres.map((item, index) => (
+                  <Reveal
+                    key={item.slug ?? item.title}
+                    as="div"
+                    preset="soft-up"
+                    duration={800}
+                    delay={index * 70}
+                    distance={12}
+                    threshold={0.1}
+                  >
+                    <AtmosphereCard item={item} darkMode={darkMode} />
+                  </Reveal>
+                ))}
+              </div>
+            </section>
+          </SectionContainer>
+        </SectionSpacing>
+      ) : null}
+
+      <SectionSpacing className="pt-0">
+        <SectionContainer>
+          <section>
+            <Reveal
+              as="div"
+              preset="fade"
+              duration={950}
+              threshold={0.08}
+            >
+              <Divider
+                darkMode={darkMode}
+                className="mb-12 w-full opacity-80"
+              />
+            </Reveal>
+
+            <Reveal
+              as="div"
+              preset="fade"
+              duration={1000}
+              delay={60}
+              threshold={0.08}
+              className="max-w-4xl"
+            >
+              <SectionEyebrow className={`mb-6 ${theme.eyebrow}`}>
+                Descoberta editorial
+              </SectionEyebrow>
+
+              <SectionTitle className="max-w-4xl">
+                A navegação da Alma Literária deve parecer menos busca e mais
+                encontro.
+              </SectionTitle>
+
+              <SectionDescription
+                maxWidth="max-w-3xl"
+                className={`mt-8 ${theme.description}`}
+              >
+                Cada bloco desta Home deve conduzir o leitor com mais calma:
+                primeiro por seleções enxutas, depois por destaques mais
+                profundos, e por fim por caminhos editoriais que ampliam a
+                descoberta sem transformar a experiência em excesso.
+              </SectionDescription>
+            </Reveal>
+          </section>
+        </SectionContainer>
+      </SectionSpacing>
     </>
   );
 }
+
+export default memo(CuratedShelfSection);

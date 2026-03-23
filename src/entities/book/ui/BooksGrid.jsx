@@ -5,6 +5,7 @@ import BookCard from "../../../entities/book/ui/BookCard";
 import { addToCart } from "../../../entities/cart/model/cartSlice";
 import useTheme from "../../../features/theme/model/useTheme";
 import { useToast } from "../../../features/toast/model/ToastContext";
+import Reveal from "../../../shared/ui/Reveal";
 import { formatCurrency } from "../../../shared/lib/formatCurrency";
 
 const GRID_ANIMATION_DURATION = 180;
@@ -109,8 +110,13 @@ function BooksGrid({
 
   return (
     <section className="w-full">
-      {/* HEADER MAIS EDITORIAL */}
-      <header
+      <Reveal
+        as="header"
+        preset="soft-up"
+        duration={950}
+        distance={18}
+        blur
+        threshold={0.08}
         className={`mb-14 border-b pb-8 ${divider} flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between`}
       >
         <div className="max-w-xl space-y-3">
@@ -141,29 +147,42 @@ function BooksGrid({
             </p>
           )}
         </div>
-      </header>
+      </Reveal>
 
-      {/* GRID */}
       {!hasBooks ? (
-        emptyFallback
+        <Reveal
+          as="div"
+          preset="soft-up"
+          duration={850}
+          distance={16}
+          blur
+          threshold={0.08}
+        >
+          {emptyFallback}
+        </Reveal>
       ) : (
         <div
           className={`grid grid-cols-1 gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-10 ${
             isTransitioning
-              ? "opacity-0 translate-y-2"
-              : "opacity-100 translate-y-0"
+              ? "translate-y-2 opacity-0"
+              : "translate-y-0 opacity-100"
           } transition-all duration-300`}
         >
           {visibleBooks.map((book, index) => (
-            <article
+            <Reveal
               key={`${currentPage}-${book.id}`}
-              style={{
-                transitionDelay: `${index * 40}ms`,
-              }}
+              as="article"
+              preset="soft-up"
+              duration={800}
+              delay={index * 45}
+              distance={14}
+              blur
+              threshold={0.06}
+              disabled={isTransitioning}
               className={`transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                 isTransitioning
-                  ? "opacity-0 translate-y-6"
-                  : "opacity-100 translate-y-0"
+                  ? "translate-y-6 opacity-0"
+                  : "translate-y-0 opacity-100"
               }`}
             >
               <BookCard
@@ -173,7 +192,7 @@ function BooksGrid({
                 onAddToWishlist={handleAddToWishlist}
                 formatPrice={formatCurrency}
               />
-            </article>
+            </Reveal>
           ))}
         </div>
       )}

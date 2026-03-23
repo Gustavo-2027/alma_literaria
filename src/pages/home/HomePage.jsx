@@ -42,12 +42,13 @@ const ALLOWED_COLLECTION_SLUGS = new Set([
   "ficcao-para-ler-devagar",
 ]);
 
+
 const usersByEmail = new Map(
-  (userInformations ?? []).map((user) => [user.email, user])
+  (userInformations ?? []).map((user) => [user.email, user]),
 );
 
 const collectionsBySlug = new Map(
-  (bookCollections ?? []).map((collection) => [collection?.slug, collection])
+  (bookCollections ?? []).map((collection) => [collection?.slug, collection]),
 );
 
 function FooterSkeleton() {
@@ -95,7 +96,7 @@ function getBrazilianClassics() {
 
   return getSafeBooks(collection, atmosphereHighlights?.brazilian ?? []).slice(
     0,
-    4
+    4,
   );
 }
 
@@ -127,7 +128,7 @@ export default function HomePage() {
 
   const featuredBooks = useMemo(
     () => atmosphereHighlights?.featured?.slice(0, 3) ?? books.slice(0, 3),
-    []
+    [],
   );
 
   const readingOfTheWeek = useMemo(() => getReadingOfTheWeek(), []);
@@ -136,7 +137,7 @@ export default function HomePage() {
   const editorialCollections = useMemo(() => getEditorialCollections(), []);
   const atmosphereCards = useMemo(
     () => (Array.isArray(bookAtmospheres) ? bookAtmospheres.slice(0, 6) : []),
-    []
+    [],
   );
 
   const ui = useMemo(
@@ -147,7 +148,7 @@ export default function HomePage() {
       description: darkMode ? "text-zinc-400" : "text-zinc-500",
       subtleLine: darkMode ? "bg-zinc-900" : "bg-zinc-200",
     }),
-    [darkMode]
+    [darkMode],
   );
 
   return (
@@ -156,19 +157,10 @@ export default function HomePage() {
       <Banner />
 
       <main>
-        <HeroIntro
-          darkMode={darkMode}
-          currentUser={currentUser}
-          eyebrowClass={ui.eyebrow}
-          dividerClass={ui.divider}
-          descriptionClass={ui.description}
-        />
+        <HeroIntro darkMode={darkMode} currentUser={currentUser} />
 
         <ManifestoSection
           darkMode={darkMode}
-          eyebrowClass={ui.eyebrow}
-          descriptionClass={ui.description}
-          subtleLineClass={ui.subtleLine}
           experienceItems={EXPERIENCE_ITEMS}
         />
 

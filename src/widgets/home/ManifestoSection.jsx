@@ -1,154 +1,177 @@
 import { memo } from "react";
 import Reveal from "../../shared/ui/Reveal";
-
-function getManifestoTheme(darkMode) {
-  return {
-    panel: darkMode
-      ? "border-zinc-800 bg-zinc-950"
-      : "border-zinc-200 bg-zinc-50",
-  };
-}
-
-function SectionContainer({ children, className = "" }) {
-  return (
-    <div className={`mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 ${className}`}>
-      {children}
-    </div>
-  );
-}
-
-function SectionEyebrow({ children, className }) {
-  return (
-    <p className={`mb-5 text-[10px] uppercase tracking-[0.36em] ${className}`}>
-      {children}
-    </p>
-  );
-}
-
-function SectionTitle({ children, className = "" }) {
-  return (
-    <h2
-      className={`text-4xl font-light leading-[1.08] tracking-[0.04em] sm:text-5xl ${className}`}
-    >
-      {children}
-    </h2>
-  );
-}
-
-function SectionDescription({ children, className = "", maxWidth = "max-w-2xl" }) {
-  return (
-    <p className={`mt-8 ${maxWidth} text-sm leading-8 sm:text-base ${className}`}>
-      {children}
-    </p>
-  );
-}
+import {
+  SectionContainer,
+  SectionDescription,
+  SectionEyebrow,
+  SectionSpacing,
+  SectionTitle,
+  Divider,
+  getHomeTheme,
+} from "./homePrimitives";
 
 const EditorialLetter = memo(function EditorialLetter({
   darkMode,
-  eyebrowClass,
-  descriptionClass,
+  title,
+  description,
 }) {
-  const theme = getManifestoTheme(darkMode);
-/*
+  const theme = getHomeTheme(darkMode);
+
   return (
-    <article className={`border p-8 sm:p-10 lg:p-14 ${theme.panel}`}>
-      <SectionEyebrow className={eyebrowClass}>Carta da semana</SectionEyebrow>
+    <Reveal
+      as="article"
+      preset="soft-up"
+      duration={950}
+      distance={20}
+      blur
+      threshold={0.1}
+      className={`border ${theme.panel}`}
+    >
+      <div className="px-6 py-8 sm:px-10 sm:py-10 lg:px-14 lg:py-14">
+        <Reveal
+          as="div"
+          preset="fade"
+          duration={800}
+          delay={0}
+          threshold={0.1}
+        >
+          <SectionEyebrow className={`mb-6 ${theme.eyebrow}`}>
+            Carta da semana
+          </SectionEyebrow>
+        </Reveal>
 
-      <SectionTitle className="max-w-3xl">
-        Nesta semana, escolhemos leituras que pedem menos pressa e mais
-        presença.
-      </SectionTitle>
+        <Reveal
+          as="div"
+          preset="soft-up"
+          duration={950}
+          delay={70}
+          distance={16}
+          blur
+          threshold={0.1}
+        >
+          <SectionTitle className="max-w-3xl text-3xl sm:text-4xl lg:text-5xl">
+            {title}
+          </SectionTitle>
+        </Reveal>
 
-      <SectionDescription
-        className={descriptionClass}
-        maxWidth="max-w-3xl"
-      >
-        Em vez de acumular estímulos, a proposta desta seleção é oferecer
-        pausa, profundidade e linguagem. Livros que não funcionam apenas como
-        consumo, mas como permanência — obras que acompanham o leitor por mais
-        tempo e ampliam a experiência de leitura para além da página.
-      </SectionDescription>
-    </article>
-  );*/
+        <Reveal
+          as="div"
+          preset="soft-up"
+          duration={900}
+          delay={140}
+          distance={14}
+          blur
+          threshold={0.1}
+        >
+          <SectionDescription
+            maxWidth="max-w-3xl"
+            className={`mt-8 ${theme.description}`}
+          >
+            {description}
+          </SectionDescription>
+        </Reveal>
+      </div>
+    </Reveal>
+  );
 });
 
 const ExperienceItem = memo(function ExperienceItem({
   title,
   description,
   showDivider,
-  descriptionClass,
-  subtleLineClass,
+  darkMode,
+  delay = 0,
 }) {
-  return (
-    <article>
-      <div className="space-y-3">
-        <h3 className="text-xl font-light tracking-[0.03em]">{title}</h3>
+  const theme = getHomeTheme(darkMode);
 
-        <p className={`max-w-sm text-sm leading-8 ${descriptionClass}`}>
+  return (
+    <Reveal
+      as="article"
+      preset="soft-up"
+      duration={850}
+      delay={delay}
+      distance={14}
+      blur
+      threshold={0.12}
+      className="pt-1"
+    >
+      <div className="space-y-4">
+        <h3 className="text-xl font-light leading-snug tracking-[0.03em] sm:text-2xl">
+          {title}
+        </h3>
+
+        <p className={`max-w-sm text-sm leading-8 ${theme.description}`}>
           {description}
         </p>
       </div>
 
       {showDivider ? (
-        <div className={`mt-10 h-px w-full ${subtleLineClass}`} />
+        <Divider darkMode={darkMode} className="mt-10 w-full opacity-80" />
       ) : null}
-    </article>
+    </Reveal>
   );
 });
 
-function ManifestoSection({
-  darkMode,
-  eyebrowClass,
-  descriptionClass,
-  subtleLineClass,
-  experienceItems = [],
-}) {
+function ManifestoSection({ darkMode, experienceItems = [] }) {
+  const theme = getHomeTheme(darkMode);
+
   return (
     <>
-      <Reveal as="section">
-        <SectionContainer className="pb-24 lg:pb-32">
-          <div className="grid grid-cols-1 gap-14 lg:grid-cols-[1.2fr_0.8fr] lg:gap-24">
-            <div>
-              <SectionEyebrow className={eyebrowClass}>Manifesto</SectionEyebrow>
+      <SectionSpacing className="pt-8 sm:pt-10 lg:pt-12">
+        <SectionContainer>
+          <section className="grid grid-cols-1 gap-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
+            <Reveal
+              as="div"
+              preset="soft-up"
+              duration={1000}
+              distance={22}
+              blur
+              threshold={0.08}
+            >
+              <SectionEyebrow className={`mb-6 ${theme.eyebrow}`}>
+                Manifesto
+              </SectionEyebrow>
 
-              <SectionTitle className="max-w-3xl">
+              <SectionTitle className="max-w-3xl text-4xl sm:text-5xl">
                 Livros escolhidos para permanecer.
               </SectionTitle>
 
-              <SectionDescription className={descriptionClass}>
+              <SectionDescription className={`mt-8 ${theme.description}`}>
                 A Alma Literária nasce da ideia de que uma boa livraria não
                 precisa oferecer apenas variedade. Ela precisa oferecer direção,
                 contexto e atmosfera. Nossa proposta é apresentar obras que
                 atravessam o tempo, ampliam repertório e tornam a leitura uma
                 experiência mais íntima, calma e memorável.
               </SectionDescription>
-            </div>
+            </Reveal>
 
-            <div className="grid grid-cols-1 gap-10">
+            <div className="grid grid-cols-1 gap-10 lg:pt-2">
               {experienceItems.map((item, index) => (
                 <ExperienceItem
                   key={item.title}
                   title={item.title}
                   description={item.description}
                   showDivider={index < experienceItems.length - 1}
-                  descriptionClass={descriptionClass}
-                  subtleLineClass={subtleLineClass}
+                  darkMode={darkMode}
+                  delay={index * 90}
                 />
               ))}
             </div>
-          </div>
+          </section>
         </SectionContainer>
-      </Reveal>
+      </SectionSpacing>
 
-      <Reveal as="section">
-        <SectionContainer className="pb-10 lg:pb-16">
-          <EditorialLetter
-            darkMode={darkMode}
-            eyebrowClass={eyebrowClass}
-            descriptionClass={descriptionClass}
-          />
+      <SectionSpacing className="pt-0 lg:pt-0">
+        <SectionContainer>
+          <section>
+            <EditorialLetter
+              darkMode={darkMode}
+              title="Nesta semana, escolhemos leituras que pedem menos pressa e mais presença."
+              description="Em vez de acumular estímulos, a proposta desta seleção é oferecer pausa, profundidade e linguagem. Livros que não funcionam apenas como consumo, mas como permanência — obras que acompanham o leitor por mais tempo e ampliam a experiência de leitura para além da página."
+            />
+          </section>
         </SectionContainer>
-      </Reveal>
+      </SectionSpacing>
     </>
   );
 }

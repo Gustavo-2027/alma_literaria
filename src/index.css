@@ -1,10 +1,47 @@
 @import "tailwindcss";
 
 /* =========================
+   MOTION TOKENS
+========================= */
+
+:root {
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 320ms;
+  --duration-base: 640ms;
+  --duration-slow: 920ms;
+  --blur-soft: 6px;
+}
+
+/* =========================
+   BASE
+========================= */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overscroll-behavior-y: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* =========================
    KEYFRAMES
 ========================= */
 
-/* Progress bar (toast, loaders sutis) */
 @keyframes progress-x {
   from {
     transform: scaleX(1);
@@ -14,7 +51,6 @@
   }
 }
 
-/* Width shrink (fallback / layout-based) */
 @keyframes shrink-x {
   from {
     width: 100%;
@@ -24,25 +60,38 @@
   }
 }
 
-/* Fade + subtle move (Apple-like) */
-@keyframes fade-in-up {
+@keyframes fade-in-up-soft {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translate3d(0, 14px, 0);
+    filter: blur(4px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
   }
 }
 
-/* Soft fade only */
-@keyframes fade-in {
+@keyframes fade-in-soft {
   from {
     opacity: 0;
+    filter: blur(2px);
   }
   to {
     opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes subtle-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -51,23 +100,73 @@
 ========================= */
 
 @layer utilities {
-  /* GPU optimized progress */
+  .motion-reveal {
+    transform: translate3d(0, 0, 0);
+  }
+
   .animate-progress {
-    transform-origin: left;
+    transform-origin: left center;
     animation: progress-x linear forwards;
   }
 
-  /* fallback animation */
   .animate-shrink {
     animation: shrink-x linear forwards;
   }
 
-  /* refined entrance */
   .animate-fade-in-up {
-    animation: fade-in-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: fade-in-up-soft var(--duration-base) var(--ease-premium) both;
   }
 
   .animate-fade-in {
-    animation: fade-in 0.4s ease-out both;
+    animation: fade-in-soft 420ms ease-out both;
+  }
+
+  .animate-scale-in {
+    animation: subtle-scale-in 560ms var(--ease-soft) both;
+  }
+
+  .transition-premium {
+    transition-property: opacity, transform, filter, background-color, border-color, color;
+    transition-duration: var(--duration-base);
+    transition-timing-function: var(--ease-premium);
+  }
+
+  .transition-soft {
+    transition-property: opacity, transform, filter, background-color, border-color, color;
+    transition-duration: 420ms;
+    transition-timing-function: var(--ease-soft);
+  }
+
+  .hover-lift-soft {
+    transition:
+      transform 500ms var(--ease-premium),
+      opacity 500ms var(--ease-premium);
+  }
+
+  .hover-lift-soft:hover {
+    transform: translate3d(0, -2px, 0);
+  }
+
+  .blur-soft {
+    filter: blur(var(--blur-soft));
+  }
+}
+
+/* =========================
+   REDUCED MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

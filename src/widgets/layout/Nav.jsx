@@ -16,6 +16,7 @@ import { clearAuth } from "../../features/auth/model/authSlice";
 import { signOutUser } from "../../features/auth/api/authService";
 import useTheme from "../../features/theme/model/useTheme";
 import { useToast } from "../../features/toast/model/ToastContext";
+import Reveal from "../../shared/ui/Reveal";
 
 function Nav() {
   const { darkMode, setDarkMode } = useTheme();
@@ -23,7 +24,6 @@ function Nav() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -34,10 +34,6 @@ function Nav() {
 
   const totalItems =
     cartItems?.reduce((acc, item) => acc + item.quantity, 0) || 0;
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     setMenuOpen(false);
@@ -93,6 +89,8 @@ function Nav() {
       });
       return;
     }
+
+    dispatch(clearAuth());
 
     showToast({
       title: "Sessão encerrada",
@@ -216,27 +214,48 @@ function Nav() {
 
   return (
     <header>
-      <nav
+      <Reveal
+        as="nav"
+        preset="soft-down"
+        duration={900}
+        distance={14}
+        threshold={0}
+        initialVisible
         className={`fixed left-0 top-0 z-50 w-full border-b px-4 backdrop-blur-xl transition-all duration-500 sm:px-8 lg:px-12 ${
           scrolled ? "py-3" : "py-4"
-        } ${theme.nav} ${
-          mounted ? "translate-y-0 opacity-100" : "-translate-y-4 opacity-0"
-        }`}
+        } ${theme.nav}`}
         aria-label="Navegação principal"
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <Link
-            to="/home"
-            onClick={closeMenu}
-            className={`shrink-0 text-[0.98rem] font-light uppercase tracking-[0.34em] transition duration-500 hover:opacity-70 sm:text-[1.08rem] ${
-              scrolled ? "scale-[0.985]" : "scale-100"
-            } ${theme.brand}`}
-            aria-label="Ir para a página inicial da Alma Literária"
+          <Reveal
+            as="div"
+            preset="fade"
+            duration={700}
+            delay={40}
+            threshold={0}
+            initialVisible
           >
-            Alma Literária
-          </Link>
+            <Link
+              to="/home"
+              onClick={closeMenu}
+              className={`shrink-0 text-[0.98rem] font-light uppercase tracking-[0.34em] transition duration-500 hover:opacity-70 sm:text-[1.08rem] ${
+                scrolled ? "scale-[0.985]" : "scale-100"
+              } ${theme.brand}`}
+              aria-label="Ir para a página inicial da Alma Literária"
+            >
+              Alma Literária
+            </Link>
+          </Reveal>
 
-          <div className="hidden items-center gap-2 md:flex">
+          <Reveal
+            as="div"
+            preset="fade"
+            duration={800}
+            delay={80}
+            threshold={0}
+            initialVisible
+            className="hidden items-center gap-2 md:flex"
+          >
             <div className="flex items-center gap-1">
               {desktopLinks.map((item) => {
                 const active = isActive(item.path);
@@ -256,7 +275,9 @@ function Nav() {
                       className={`absolute bottom-[7px] left-1/2 h-px -translate-x-1/2 transition-all duration-300 ${
                         active
                           ? `w-8 ${darkMode ? "bg-white" : "bg-black"}`
-                          : `w-0 ${darkMode ? "bg-white" : "bg-black"} group-hover:w-6 opacity-60`
+                          : `w-0 ${
+                              darkMode ? "bg-white" : "bg-black"
+                            } group-hover:w-6 opacity-60`
                       }`}
                     />
                   </button>
@@ -300,9 +321,17 @@ function Nav() {
               {user ? <LogOut size={15} /> : <LogIn size={15} />}
               <span>{user ? "Sair" : "Entrar"}</span>
             </button>
-          </div>
+          </Reveal>
 
-          <div className="flex items-center gap-2 md:hidden">
+          <Reveal
+            as="div"
+            preset="fade"
+            duration={750}
+            delay={80}
+            threshold={0}
+            initialVisible
+            className="flex items-center gap-2 md:hidden"
+          >
             <button
               type="button"
               onClick={toggleTheme}
@@ -322,7 +351,7 @@ function Nav() {
             >
               {menuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-          </div>
+          </Reveal>
         </div>
 
         <div
@@ -330,7 +359,13 @@ function Nav() {
             menuOpen ? "mt-4 max-h-[420px] opacity-100" : "max-h-0 opacity-0"
           }`}
         >
-          <div
+          <Reveal
+            as="div"
+            preset="soft-up"
+            duration={700}
+            distance={12}
+            threshold={0}
+            disabled={!menuOpen}
             className={`rounded-[2rem] border p-3 ${theme.mobilePanel} ${
               menuOpen ? "translate-y-0" : "-translate-y-2"
             } transition-all duration-500`}
@@ -389,9 +424,9 @@ function Nav() {
                 <span>{user ? "Sair" : "Entrar"}</span>
               </button>
             </div>
-          </div>
+          </Reveal>
         </div>
-      </nav>
+      </Reveal>
 
       <div
         className={`fixed inset-0 z-40 transition-opacity duration-500 md:hidden ${

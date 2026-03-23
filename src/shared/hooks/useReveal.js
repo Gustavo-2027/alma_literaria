@@ -1,7 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 
-function getInitialVisibility(disabled) {
-  return Boolean(disabled);
+function canUseIntersectionObserver() {
+  return (
+    typeof window !== "undefined" &&
+    typeof IntersectionObserver !== "undefined"
+  );
+}
+
+function getInitialVisibleState({ disabled, initialVisible }) {
+  if (disabled) return true;
+  return Boolean(initialVisible);
+}
+
+function normalizeThreshold(threshold) {
+  if (Array.isArray(threshold)) return threshold;
+  return typeof threshold === "number" ? threshold : 0.12;
 }
 
 export default function useReveal({
@@ -10,61 +23,103 @@ export default function useReveal({
   rootMargin = "0px 0px -10% 0px",
   once = true,
   disabled = false,
+  initialVisible = false,
+  onReveal,
 } = {}) {
   const ref = useRef(null);
   const observerRef = useRef(null);
+  const hasRevealedRef = useRef(false);
+  const onRevealRef = useRef(onReveal);
+
   const [visible, setVisible] = useState(() =>
-    getInitialVisibility(disabled)
+    getInitialVisibleState({ disabled, initialVisible })
   );
 
   useEffect(() => {
+    onRevealRef.current = onReveal;
+  }, [onReveal]);
+
+  useEffect(() => {
+    if (disabled) {
+      setVisible(true);
+      hasRevealedRef.current = true;
+      return undefined;
+    }
+
     const element = ref.current;
 
-    if (disabled) {
-      observerRef.current?.disconnect();
+    if (!element) {
+      return undefined;
+    }
+
+    if (!canUseIntersectionObserver()) {
+      setVisible(true);
+      hasRevealedRef.current = true;
+
+      if (typeof onRevealRef.current === "function") {
+        onRevealRef.current();
+      }
+
+      return undefined;
+    }
+
+    if (observerRef.current) {
+      observerRef.current.disconnect();
       observerRef.current = null;
-      setVisible(true);
-      return undefined;
     }
 
-    if (!element || typeof IntersectionObserver === "undefined") {
-      setVisible(true);
-      return undefined;
-    }
+    const normalizedThreshold = normalizeThreshold(threshold);
 
-    const observer = new IntersectionObserver(
+    observerRef.current = new IntersectionObserver(
       ([entry]) => {
         const isIntersecting = entry.isIntersecting;
+        const isVisibleEnough =
+          isIntersecting && entry.intersectionRatio > 0;
 
-        if (isIntersecting) {
-          setVisible(true);
+        if (!isVisibleEnough) {
+          if (!once && !hasRevealedRef.current) {
+            setVisible(false);
+          }
 
-          if (once) {
-            observer.unobserve(entry.target);
+          if (!once && hasRevealedRef.current) {
+            setVisible(false);
           }
 
           return;
         }
 
-        if (!once) {
-          setVisible(false);
+        setVisible(true);
+
+        if (!hasRevealedRef.current) {
+          hasRevealedRef.current = true;
+
+          if (typeof onRevealRef.current === "function") {
+            onRevealRef.current();
+          }
+        }
+
+        if (once && observerRef.current) {
+          observerRef.current.unobserve(element);
+          observerRef.current.disconnect();
+          observerRef.current = null;
         }
       },
       {
-        threshold,
+        threshold: normalizedThreshold,
         root,
         rootMargin,
       }
     );
 
-    observerRef.current = observer;
-    observer.observe(element);
+    observerRef.current.observe(element);
 
     return () => {
-      observer.disconnect();
-      observerRef.current = null;
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
     };
   }, [threshold, root, rootMargin, once, disabled]);
 
-  return { ref, visible };
+  return { ref, visible, hasRevealed: hasRevealedRef.current };
 }

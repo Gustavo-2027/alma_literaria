@@ -171,7 +171,6 @@ export default function Catalog() {
   const [sortBy, setSortBy] = useState("featured");
   const [currentPage, setCurrentPage] = useState(1);
 
-  // 👇 ADICIONA AQUI
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, []);

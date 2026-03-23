@@ -15,6 +15,7 @@ import Toast from "../ui/Toast";
 const ToastContext = createContext(undefined);
 
 const DEFAULT_TOAST = {
+  id: "",
   title: "Concluído",
   description: "",
   actionLabel: "",
@@ -30,10 +31,15 @@ const NAVIGATION_DELAY = 140;
 const FINISH_HOLD = 420;
 const PROGRESS_FRAME_MS = 1000 / 60;
 
+function createToastId() {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
 function normalizeToast(options) {
   if (typeof options === "string") {
     return {
       ...DEFAULT_TOAST,
+      id: createToastId(),
       title: options,
     };
   }
@@ -41,14 +47,28 @@ function normalizeToast(options) {
   return {
     ...DEFAULT_TOAST,
     ...options,
+    id: options?.id || createToastId(),
     duration: Math.max(Number(options?.duration ?? DEFAULT_TOAST.duration), 0),
   };
+}
+
+function areToastsEquivalent(a, b) {
+  if (!a || !b) return false;
+
+  return (
+    a.title === b.title &&
+    a.description === b.description &&
+    a.icon === b.icon &&
+    a.actionLabel === b.actionLabel &&
+    a.actionTo === b.actionTo
+  );
 }
 
 function getToastTheme(darkMode) {
   if (darkMode) {
     return {
-      wrapper: "border border-zinc-700 bg-black text-white shadow-none",
+      wrapper:
+        "border-zinc-700 bg-black text-white shadow-[0_18px_50px_rgba(0,0,0,0.38)]",
       progressTrack: "bg-white/10",
       progressBar: "bg-white",
       icon: "text-white",
@@ -56,12 +76,14 @@ function getToastTheme(darkMode) {
       description: "text-zinc-300",
       action:
         "text-white hover:border-white hover:text-white focus-visible:ring-white/20",
-      close: "text-zinc-400 hover:text-white focus-visible:ring-white/20",
+      close:
+        "text-zinc-400 hover:bg-white/6 hover:text-white focus-visible:ring-white/20",
     };
   }
 
   return {
-    wrapper: "border-black bg-white text-black shadow-none",
+    wrapper:
+      "border-zinc-200 bg-white text-black shadow-[0_18px_50px_rgba(0,0,0,0.08)]",
     progressTrack: "bg-black/10",
     progressBar: "bg-black",
     icon: "text-black",
@@ -69,7 +91,8 @@ function getToastTheme(darkMode) {
     description: "text-zinc-700",
     action:
       "text-black hover:border-black hover:text-black focus-visible:ring-black/20",
-    close: "text-zinc-500 hover:text-black focus-visible:ring-black/20",
+    close:
+      "text-zinc-500 hover:bg-black/5 hover:text-black focus-visible:ring-black/20",
   };
 }
 
@@ -253,10 +276,8 @@ export function ToastProvider({ children }) {
     ]
   );
 
-  const showToast = useCallback(
-    (options) => {
-      const nextToast = normalizeToast(options);
-
+  const mountToast = useCallback(
+    (nextToast, showImmediately = false) => {
       clearAllTimers();
       closingRef.current = false;
 
@@ -266,8 +287,15 @@ export function ToastProvider({ children }) {
 
       setToast(nextToast);
       setRemaining(nextToast.duration);
-      setVisible(false);
       setIsPaused(false);
+
+      if (showImmediately) {
+        setVisible(true);
+        startTimer(nextToast.duration);
+        return;
+      }
+
+      setVisible(false);
 
       enterTimerRef.current = window.setTimeout(() => {
         setVisible(true);
@@ -277,25 +305,28 @@ export function ToastProvider({ children }) {
     [clearAllTimers, startTimer]
   );
 
-  const replaceToast = useCallback(
+  const showToast = useCallback(
     (options) => {
       const nextToast = normalizeToast(options);
 
-      clearAllTimers();
-      closingRef.current = false;
+      if (toastRef.current && areToastsEquivalent(toastRef.current, nextToast)) {
+        remainingRef.current = nextToast.duration;
+        setRemaining(nextToast.duration);
+        startTimer(nextToast.duration);
+        return;
+      }
 
-      toastRef.current = nextToast;
-      startedAtRef.current = 0;
-      remainingRef.current = nextToast.duration;
-
-      setToast(nextToast);
-      setRemaining(nextToast.duration);
-      setVisible(true);
-      setIsPaused(false);
-
-      startTimer(nextToast.duration);
+      mountToast(nextToast, false);
     },
-    [clearAllTimers, startTimer]
+    [mountToast, startTimer]
+  );
+
+  const replaceToast = useCallback(
+    (options) => {
+      const nextToast = normalizeToast(options);
+      mountToast(nextToast, true);
+    },
+    [mountToast]
   );
 
   const pauseTimer = useCallback(() => {
@@ -372,7 +403,10 @@ export function ToastProvider({ children }) {
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibilityChange
+      );
       clearAllTimers();
     };
   }, [hideToast, pauseTimer, resumeTimer, clearAllTimers]);

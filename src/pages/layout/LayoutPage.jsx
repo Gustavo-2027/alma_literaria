@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 
 import useTheme from "../../features/theme/model/useTheme";
 import { ToastProvider } from "../../features/toast/model/ToastContext";
+import ScrollToTop from "../../shared/ui/ScrollToTop"
 
 export default function LayoutPage() {
   const { darkMode } = useTheme();
@@ -20,7 +21,9 @@ export default function LayoutPage() {
         }`}
       >
         <ToastProvider>
-          <Outlet />
+          <ScrollToTop/>
+            <Outlet />
+
         </ToastProvider>
       </div>
     </div>
