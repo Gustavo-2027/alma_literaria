@@ -5,10 +5,9 @@ import BookCard from "../../../entities/book/ui/BookCard";
 import { addToCart } from "../../../entities/cart/model/cartSlice";
 import useTheme from "../../../features/theme/model/useTheme";
 import { useToast } from "../../../features/toast/model/ToastContext";
-import Reveal from "../../../shared/ui/Reveal";
 import { formatCurrency } from "../../../shared/lib/formatCurrency";
 
-const GRID_ANIMATION_DURATION = 180;
+const GRID_ANIMATION_DURATION = 90;
 
 function BooksGrid({
   books = [],
@@ -37,21 +36,20 @@ function BooksGrid({
     setIsTransitioning(true);
 
     if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+      window.clearTimeout(timeoutRef.current);
     }
 
-    timeoutRef.current = setTimeout(() => {
+    timeoutRef.current = window.setTimeout(() => {
       setRenderedBooks(books);
       previousBooksRef.current = books;
-
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setIsTransitioning(false);
-        });
-      });
+      setIsTransitioning(false);
     }, GRID_ANIMATION_DURATION);
 
-    return () => clearTimeout(timeoutRef.current);
+    return () => {
+      if (timeoutRef.current) {
+        window.clearTimeout(timeoutRef.current);
+      }
+    };
   }, [books]);
 
   const visibleBooks = useMemo(() => renderedBooks, [renderedBooks]);
@@ -110,14 +108,8 @@ function BooksGrid({
 
   return (
     <section className="w-full">
-      <Reveal
-        as="header"
-        preset="soft-up"
-        duration={950}
-        distance={18}
-        blur
-        threshold={0.08}
-        className={`mb-14 border-b pb-8 ${divider} flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between`}
+      <header
+        className={`mb-14 flex flex-col gap-6 border-b pb-8 sm:flex-row sm:items-end sm:justify-between ${divider}`}
       >
         <div className="max-w-xl space-y-3">
           <p className={`text-[10px] uppercase tracking-[0.32em] ${subtleText}`}>
@@ -147,43 +139,28 @@ function BooksGrid({
             </p>
           )}
         </div>
-      </Reveal>
+      </header>
 
       {!hasBooks ? (
-        <Reveal
-          as="div"
-          preset="soft-up"
-          duration={850}
-          distance={16}
-          blur
-          threshold={0.08}
+        <div
+          className={`transition-opacity duration-150 ease-out ${
+            isTransitioning ? "opacity-0" : "opacity-100"
+          }`}
         >
           {emptyFallback}
-        </Reveal>
+        </div>
       ) : (
         <div
-          className={`grid grid-cols-1 gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-10 ${
+          className={`grid grid-cols-1 gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-10 transition-[opacity,transform] duration-150 ease-out ${
             isTransitioning
-              ? "translate-y-2 opacity-0"
+              ? "translate-y-[4px] opacity-0"
               : "translate-y-0 opacity-100"
-          } transition-all duration-300`}
+          }`}
         >
-          {visibleBooks.map((book, index) => (
-            <Reveal
+          {visibleBooks.map((book) => (
+            <article
               key={`${currentPage}-${book.id}`}
-              as="article"
-              preset="soft-up"
-              duration={800}
-              delay={index * 45}
-              distance={14}
-              blur
-              threshold={0.06}
-              disabled={isTransitioning}
-              className={`transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                isTransitioning
-                  ? "translate-y-6 opacity-0"
-                  : "translate-y-0 opacity-100"
-              }`}
+              className="h-full transform-gpu"
             >
               <BookCard
                 book={book}
@@ -192,7 +169,7 @@ function BooksGrid({
                 onAddToWishlist={handleAddToWishlist}
                 formatPrice={formatCurrency}
               />
-            </Reveal>
+            </article>
           ))}
         </div>
       )}
